@@ -10,9 +10,10 @@ module.exports = {
     colors: {
         primary: "#372F22",
         secondary: "#FFEDD8",
-        onPrimary: "#ffffff",
-        onSecondary: "000000",
-        black: "#000000",
+        textPrimary: "#000000",
+        textSecondary: "#ffffff",
+        separator: "#A5A5A5",
+        warning: "##C33A3A",
         white: "#ffffff"
     },
     fontFamily: {
