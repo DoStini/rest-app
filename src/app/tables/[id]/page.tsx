@@ -3,7 +3,7 @@ import { TableController } from "@/controllers/TableControllers";
 import { TableAccountType } from "@/types/TableTypes";
 import { notFound } from "next/navigation";
 
-const AccountCard = ({ name, id, owner }: TableAccountType) => {
+const AccountCard = ({ name, owner }: TableAccountType) => {
   return <div className="flex flex-col w-full bg-primary shadow-md rounded-md hover:bg-accent transition">
       <Card title={name} description={`${owner} €`} />
   </div>
