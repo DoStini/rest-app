@@ -1,18 +1,27 @@
 export type TableType = {
-    id: string
-    name: string
-    active: number
-    accounts: TableAccountType[]
+  id: string;
+  name: string;
+  active: number;
+  accounts: OrderType[];
 };
 
-export type TableCardType = {
-    id: string
-    name: string
-    active: number
+export type UserType = {
+  id: number;
+  username: string;
+  password: string;
+  createdAt: Date;
 };
 
-export type TableAccountType = {
-    id: string
-    name: string
-    owner: string
-}
+export type TableSectionType = {
+  name: string;
+  ordersCount: number;
+  orders: OrderType[];
+};
+
+export type OrderType = {
+  id: number;
+  name: string;
+  userId: number;
+  tableId: number | null;
+  creator: UserType;
+};

@@ -8,12 +8,20 @@ module.exports = {
   ],
   theme: {
     colors: {
-        primary: "#14213d",
-        accent: "#395AA3",
-        secondary: "#fca311",
-        contrast: "#F8CE8B",
-        platinum: "#e5e5e5",
+        primary: "#372F22",
+        secondary: "#FFEDD8",
+        onPrimary: "#ffffff",
+        onSecondary: "000000",
+        black: "#000000",
+        white: "#ffffff"
     },
+    fontFamily: {
+        extend: {
+            fontFamily: {
+              sans: ['var(--font-lato)']
+            }
+        }
+    }
   },
   plugins: [
     require('preline/plugin'),

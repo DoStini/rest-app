@@ -1,32 +1,37 @@
-import { Card } from "@/components/Cards";
+import { Card, OrderCard } from "@/components/Cards";
 import { TableController } from "@/controllers/TableControllers";
-import { TableCardType } from "@/types/TableTypes";
-import Link from "next/link";
+import { TableSectionType } from "@/types/TableTypes";
 
 export default async function TablesList() {
-  const activeTables = await TableController.findActiveTables();
+  const controller = new TableController();
+  const activeTables = await controller.findActiveTables();
 
   return (
-    <div className="grid w-full p-12 md:grid-cols-2 grid-cols-1 gap-4 md:gap-6">
+    <div className="w-full p-12">
       {activeTables.map((table) => (
-        <TableCard
+        <TableSection
           key={table.name}
-          id={table.id}
           name={table.name}
-          active={table.active}
+          orders={table.orders}
+          ordersCount={table._count.orders}
         />
       ))}
     </div>
   );
 }
 
-const TableCard = ({ name, id, active }: TableCardType) => {
+const TableSection = ({ name, orders, ordersCount }: TableSectionType) => {
   return (
-    <Link
-      className="flex flex-col w-full bg-primary shadow-md rounded-md hover:bg-accent transition"
-      href={`/tables/${id}`}
-    >
-      <Card title={name} description={`${active} active accounts`} />
-    </Link>
+    <div>
+      <h1 className="text-black mt-4 mb-2 text-xl">{name}</h1>
+
+      {ordersCount === 0 ? (
+        <h4>No accounts found</h4>
+      ) : (
+        orders.map((order) => (
+          <OrderCard key={order.id} title={order.name} description={order.creator.username}></OrderCard>
+        ))
+      )}
+    </div>
   );
 };
