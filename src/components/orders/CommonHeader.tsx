@@ -1,4 +1,4 @@
-import Border from "./Border";
+import Divider from "./Divider";
 
 export default function CommonHeader({
   children,
@@ -10,7 +10,7 @@ export default function CommonHeader({
       <div className="flex justify-between items-center text-textPrimary my-5">
         {children}
       </div>
-      <Border />
+      <Divider />
     </>
   );
 }

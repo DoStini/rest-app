@@ -1,8 +1,13 @@
 export type TableType = {
-  id: string;
+  id: number;
   name: string;
   active: number;
   accounts: OrderType[];
+};
+
+export type SimpleTableType = {
+  id: number;
+  name: string;
 };
 
 export type UserType = {

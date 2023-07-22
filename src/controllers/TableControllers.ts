@@ -9,13 +9,17 @@ export class TableController {
     this.prisma = new PrismaClient();
   }
 
+  async listAllTables() {
+    return this.prisma.table.findMany();
+  }
+
   async findActiveTables() {
     const tables = await this.prisma.table.findMany({
       include: {
         orders: {
-            include: {
-                creator: true
-            }
+          include: {
+            creator: true,
+          },
         },
         _count: {
           select: { orders: true },

@@ -43,7 +43,7 @@ export default function RootLayout({
       <head></head>
       <body className={lato.className}>
         <main className="flex min-h-screen flex-col items-center bg-white">
-          <div className="w-full pt-10 px-6 md:px-20">{children}</div>
+          <div className="w-full pt-10 px-4 md:px-16">{children}</div>
         </main>
       </body>
     </html>
