@@ -20,7 +20,12 @@ export class TableController {
       include: {
         orders: {
           include: {
-            creator: true,
+            creator: {
+              select: {
+                id: true,
+                username: true,
+              },
+            },
           },
         },
         _count: {
@@ -39,6 +44,27 @@ export class TableController {
         userId,
       },
     });
-    console.log(created);
+
+    return created;
+  }
+
+  static getOrder(id: number) {
+    return this.prisma.order.findUnique({
+      where: { id },
+      include: {
+        creator: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        Table: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
   }
 }

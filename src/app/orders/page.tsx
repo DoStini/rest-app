@@ -5,7 +5,7 @@ import { TableController } from "@/controllers/TableControllers";
 import ROUTES from "@/helpers/constants/Routes";
 import { fetcher } from "@/helpers/fetcher";
 import { TableSectionType } from "@/types/TableTypes";
-import { SwrOrdersType } from "@/types/swrTypes";
+import { FetcherOrdersType, SwrOrdersType } from "@/types/swrTypes";
 import Link from "next/link";
 import { FiPlusCircle } from "react-icons/fi";
 import useSWR, { SWRConfig } from "swr";
@@ -13,16 +13,16 @@ import useSWR, { SWRConfig } from "swr";
 export const revalidate = 0;
 
 export default function TablesList() {
-  const { data, isLoading }: SwrOrdersType = useSWR(
+  const { data, isLoading }: SwrOrdersType = useSWR<FetcherOrdersType>(
     ROUTES.API.ORDERS.ROOT,
     fetcher
   );
 
-  if (isLoading) {
+  if (isLoading || !data) {
     return <></>;
   }
 
-  const { tables } = data;
+  const tables = data?.data;
 
   return (
     <>
@@ -47,7 +47,7 @@ const Header = () => {
   return (
     <CommonHeader>
       <h1 className="text-2xl text-textPrimary">Contas ativas</h1>
-      <Link href={`/orders/create`} className="text-3xl">
+      <Link href={ROUTES.PAGES.ORDERS.CREATE} className="text-3xl">
         <FiPlusCircle></FiPlusCircle>
       </Link>
     </CommonHeader>
@@ -64,11 +64,18 @@ const TableSection = ({ name, orders, ordersCount }: TableSectionType) => {
       ) : (
         <div className="grid-cols-1 divide-y divide-separator">
           {orders.map((order) => (
-            <OrderCard
-              key={order.id}
-              title={order.name}
-              description={order.creator.username}
-            />
+            <div key={`root-${order.id}`}>
+              <Link
+                key={ROUTES.PAGES.ORDERS.BY_ID(order.id)}
+                href={ROUTES.PAGES.ORDERS.BY_ID(order.id)}
+              >
+                <OrderCard
+                  key={order.id}
+                  title={order.name}
+                  description={order.creator.username}
+                />
+              </Link>
+            </div>
           ))}
         </div>
       )}

@@ -28,7 +28,6 @@ export type TableSectionType = {
 export type OrderType = {
   id: number;
   name: string;
-  userId: number;
-  tableId: number | null;
   creator: UserType;
+  Table: SimpleTableType;
 };
