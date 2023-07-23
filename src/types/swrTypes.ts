@@ -9,6 +9,7 @@ type SwrBase<T> = {
   isLoading: boolean;
   error: any;
   data: T | undefined;
+  mutate: (data?: T, shouldRevalidate?: boolean) => Promise<T | undefined>;
 };
 
 export type FetcherOrdersType = CustomFetcherResponse<TableType[]>;

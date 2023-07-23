@@ -3,6 +3,7 @@ import { OrderCard, ProductCard } from "@/components/Cards";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
 import { TableController } from "@/controllers/TableControllers";
+import { jsonPost } from "@/helpers/api";
 import ROUTES from "@/helpers/constants/Routes";
 import { fetcher } from "@/helpers/fetcher";
 import { redirectNotFound } from "@/helpers/router";
@@ -11,7 +12,7 @@ import { FetcherOrderType, SwrOrderType } from "@/types/swrTypes";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FiArrowLeft, FiPlusCircle } from "react-icons/fi";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 
 export default function OrderPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -22,6 +23,8 @@ export default function OrderPage({ params }: { params: { id: string } }) {
     ROUTES.API.ORDERS.BY_ID(id),
     fetcher
   );
+  const { mutate } = useSWRConfig();
+  const refresh = () => mutate(ROUTES.API.ORDERS.BY_ID(id));
 
   if (isLoading) {
     return <></>;
@@ -46,7 +49,7 @@ export default function OrderPage({ params }: { params: { id: string } }) {
       </section>
       <Divider />
 
-      <ProductSection order={order}></ProductSection>
+      <ProductSection order={order} refresh={refresh}></ProductSection>
     </div>
   );
 }
@@ -62,7 +65,22 @@ const Header = ({ order }: { order: OrderType }) => {
   );
 };
 
-const ProductSection = ({ order }: { order: OrderType }) => {
+const ProductSection = ({
+  order,
+  refresh,
+}: {
+  order: OrderType;
+  refresh: () => void;
+}) => {
+  const onAmountChanged = (
+    orderId: number,
+    productId: number,
+    amount: number
+  ) =>
+    jsonPost(ROUTES.API.ORDERS.UPDATE(orderId, productId), { amount }).then(
+      refresh
+    );
+
   return (
     <>
       <section className="my-2 flex justify-between items-center text-textPrimary">
@@ -78,6 +96,9 @@ const ProductSection = ({ order }: { order: OrderType }) => {
             key={`product${orderProduct.productId}-order${orderProduct.orderId}`}
             name={orderProduct.product.name}
             amount={orderProduct.amount}
+            onChangeSave={(amount) =>
+              onAmountChanged(order.id, orderProduct.product.id, amount)
+            }
           ></ProductCard>
         ))}
       </div>

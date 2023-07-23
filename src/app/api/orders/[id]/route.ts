@@ -6,7 +6,6 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const { id: idRaw } = params;
-  console.log(idRaw);
 
   if (!idRaw) {
     return NextResponse.json({}, { status: 404 });
@@ -18,7 +17,6 @@ export async function GET(
   }
 
   const order = await TableController.getOrder(id);
-  console.log(order);
 
   if (!order) {
     return NextResponse.json({}, { status: 404 });

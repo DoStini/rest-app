@@ -6,12 +6,14 @@ type CounterInputType = {
   defaultValue: number;
   min: number;
   max: number;
+  onChangeSave: (amount: number) => void;
 };
 
 export default function CounterInput({
   defaultValue,
   min,
   max,
+  onChangeSave,
 }: CounterInputType) {
   const [value, setValue] = useState(defaultValue);
   const valueChanged = useMemo(
@@ -47,7 +49,7 @@ export default function CounterInput({
         className={`text-xl pl-4 text-success ${
           valueChanged ? "cursor-pointer" : "invisible"
         }`}
-        onClick={increment}
+        onClick={() => onChangeSave(value)}
       >
         <BsFillCheckSquareFill></BsFillCheckSquareFill>
       </div>

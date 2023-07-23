@@ -72,4 +72,39 @@ export class TableController {
       },
     });
   }
+
+  static async updateOrder(orderId: number, productId: number, amount: number) {
+    if (amount <= 0) {
+      return this.prisma.orderProduct.delete({
+        where: {
+          productId_orderId: {
+            orderId,
+            productId,
+          },
+        },
+      });
+    }
+
+    const updated = await this.prisma.orderProduct.upsert({
+      where: {
+        productId_orderId: {
+          orderId,
+          productId,
+        },
+      },
+      update: {
+        amount: {
+          set: amount,
+        },
+      },
+      create: {
+        orderId,
+        productId,
+        amount: amount,
+        comment: "",
+      },
+    });
+
+    return updated;
+  }
 }

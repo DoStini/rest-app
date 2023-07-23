@@ -9,6 +9,7 @@ type LinkCardType = {
 type ProductCardType = {
   name: string;
   amount: number;
+  onChangeSave: (amount: number) => void;
 };
 
 export function OrderCard({ title, description }: LinkCardType) {
@@ -24,7 +25,7 @@ export function OrderCard({ title, description }: LinkCardType) {
   );
 }
 
-export function ProductCard({ name, amount }: ProductCardType) {
+export function ProductCard({ name, amount, onChangeSave }: ProductCardType) {
   return (
     <div className="p-4 md:p-5 bg-primary">
       <div className="text-textSecondary text-sm flex flex-row justify-between items-center">
@@ -33,6 +34,7 @@ export function ProductCard({ name, amount }: ProductCardType) {
           defaultValue={amount}
           min={0}
           max={Infinity}
+          onChangeSave={onChangeSave}
         ></CounterInput>
       </div>
     </div>
