@@ -1,4 +1,5 @@
 import { AiOutlineRight } from "react-icons/ai";
+import CounterInput from "./CounterInput";
 
 type LinkCardType = {
   title: string;
@@ -28,7 +29,11 @@ export function ProductCard({ name, amount }: ProductCardType) {
     <div className="p-4 md:p-5 bg-primary">
       <div className="text-textSecondary text-sm flex flex-row justify-between items-center">
         <h3>{name}</h3>
-        <p>{amount}</p>
+        <CounterInput
+          defaultValue={amount}
+          min={0}
+          max={Infinity}
+        ></CounterInput>
       </div>
     </div>
   );

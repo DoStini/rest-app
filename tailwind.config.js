@@ -14,7 +14,8 @@ module.exports = {
         textPrimary: "#000000",
         textSecondary: "#ffffff",
         separator: "#A5A5A5",
-        warning: "##C33A3A",
+        warning: "#C33A3A",
+        success: "#34A300",
         white: "#ffffff"
     },
     fontFamily: {
