@@ -28,20 +28,22 @@ model Order {
   tableId      Int?
 }
 
-enum OrderCategory {
-  DRINKS
-  FAST
-  SLOW
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String
+  position Int       @default(autoincrement())
+  products Product[]
 }
 
 model Product {
-  id            Int            @id @default(autoincrement())
-  name          String
-  image         String?
-  price         Decimal        @db.Decimal(12, 2)
-  position      Int            @default(autoincrement())
-  orderCategory OrderCategory
-  orderProduct  OrderProduct[]
+  id           Int            @id @default(autoincrement())
+  name         String
+  image        String?
+  price        Decimal        @db.Decimal(12, 2)
+  position     Int            @default(autoincrement())
+  category     Category       @relation(fields: [categoryId], references: [id])
+  orderProduct OrderProduct[]
+  categoryId   Int
 }
 
 model OrderProduct {
