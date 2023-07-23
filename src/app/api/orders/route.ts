@@ -6,7 +6,5 @@ export async function GET(request: Request) {
   setDynamicRoute(request);
 
   const activeTables = await TableController.findActiveTables();
-  return NextResponse.json({
-    tables: activeTables,
-  });
+  return NextResponse.json(activeTables);
 }

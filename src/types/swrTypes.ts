@@ -1,6 +1,19 @@
-import { TableType } from "./TableTypes";
+import { OrderType, TableType } from "./TableTypes";
 
-export type SwrOrdersType = {
+export interface CustomFetcherResponse<T> {
+  status: number;
+  data: T;
+}
+
+type SwrBase<T> = {
   isLoading: boolean;
-  data: { tables: TableType[] };
+  error: any;
+  data: T | undefined;
+  mutate: (data?: T, shouldRevalidate?: boolean) => Promise<T | undefined>;
 };
+
+export type FetcherOrdersType = CustomFetcherResponse<TableType[]>;
+export type SwrOrdersType = SwrBase<FetcherOrdersType>;
+
+export type FetcherOrderType = CustomFetcherResponse<OrderType>;
+export type SwrOrderType = SwrBase<FetcherOrderType>;

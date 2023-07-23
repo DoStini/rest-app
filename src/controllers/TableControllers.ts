@@ -20,7 +20,12 @@ export class TableController {
       include: {
         orders: {
           include: {
-            creator: true,
+            creator: {
+              select: {
+                id: true,
+                username: true,
+              },
+            },
           },
         },
         _count: {
@@ -39,6 +44,70 @@ export class TableController {
         userId,
       },
     });
-    console.log(created);
+
+    return created;
+  }
+
+  static getOrder(id: number) {
+    return this.prisma.order.findUnique({
+      where: { id },
+      include: {
+        OrderProduct: {
+          include: {
+            product: true,
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
+        creator: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        Table: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
+  static async updateOrder(orderId: number, productId: number, amount: number) {
+    if (amount <= 0) {
+      return this.prisma.orderProduct.delete({
+        where: {
+          productId_orderId: {
+            orderId,
+            productId,
+          },
+        },
+      });
+    }
+
+    const updated = await this.prisma.orderProduct.upsert({
+      where: {
+        productId_orderId: {
+          orderId,
+          productId,
+        },
+      },
+      update: {
+        amount: {
+          set: amount,
+        },
+      },
+      create: {
+        orderId,
+        productId,
+        amount: amount,
+        comment: "",
+      },
+    });
+
+    return updated;
   }
 }
