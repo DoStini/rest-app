@@ -88,7 +88,10 @@ const ProductSection = ({
     <>
       <section className="my-2 flex justify-between items-center text-textPrimary">
         <h1 className="text-textPrimary text-xl">Produtos</h1>
-        <Link href={ROUTES.PAGES.ORDERS.CREATE} className="text-3xl">
+        <Link
+          href={ROUTES.PAGES.ORDERS.ADD_BY_ID(order.id)}
+          className="text-3xl"
+        >
           <FiPlusCircle></FiPlusCircle>
         </Link>
       </section>
