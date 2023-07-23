@@ -11,6 +11,7 @@ import { OrderType, TableSectionType } from "@/types/TableTypes";
 import { FetcherOrderType, SwrOrderType } from "@/types/swrTypes";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { FiArrowLeft, FiPlusCircle } from "react-icons/fi";
 import useSWR, { useSWRConfig } from "swr";
 
@@ -70,15 +71,17 @@ const ProductSection = ({
   refresh,
 }: {
   order: OrderType;
-  refresh: () => void;
+  refresh: () => Promise<any>;
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const onAmountChanged = (
     orderId: number,
     productId: number,
     amount: number
   ) =>
     jsonPost(ROUTES.API.ORDERS.UPDATE(orderId, productId), { amount }).then(
-      refresh
+      () => refresh().then(() => setIsLoading(false))
     );
 
   return (
@@ -96,9 +99,11 @@ const ProductSection = ({
             key={`product${orderProduct.productId}-order${orderProduct.orderId}`}
             name={orderProduct.product.name}
             amount={orderProduct.amount}
-            onChangeSave={(amount) =>
-              onAmountChanged(order.id, orderProduct.product.id, amount)
-            }
+            loading={isLoading}
+            onChangeSave={(amount) => {
+              setIsLoading(true);
+              onAmountChanged(order.id, orderProduct.product.id, amount);
+            }}
           ></ProductCard>
         ))}
       </div>

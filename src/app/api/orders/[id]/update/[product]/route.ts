@@ -19,6 +19,9 @@ export async function POST(
 
   const { amount } = await request.json();
 
+  // code javascript sleep
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   const updated = await TableController.updateOrder(orderId, productId, amount);
 
   return NextResponse.json(updated);
