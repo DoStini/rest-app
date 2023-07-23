@@ -19,7 +19,7 @@ export async function POST(
 
   const { amount } = await request.json();
 
-  const updated = TableController.updateOrder(orderId, productId, amount);
+  const updated = await TableController.updateOrder(orderId, productId, amount);
 
   return NextResponse.json(updated);
 }
