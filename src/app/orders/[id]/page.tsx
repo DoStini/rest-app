@@ -1,5 +1,5 @@
 "use client";
-import { OrderCard } from "@/components/Cards";
+import { OrderCard, ProductCard } from "@/components/Cards";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
 import { TableController } from "@/controllers/TableControllers";
@@ -46,7 +46,7 @@ export default function OrderPage({ params }: { params: { id: string } }) {
       </section>
       <Divider />
 
-      <ProductSection></ProductSection>
+      <ProductSection order={order}></ProductSection>
     </div>
   );
 }
@@ -62,13 +62,25 @@ const Header = ({ order }: { order: OrderType }) => {
   );
 };
 
-const ProductSection = () => {
+const ProductSection = ({ order }: { order: OrderType }) => {
   return (
-    <section className="my-2 flex justify-between items-center text-textPrimary">
-      <h1 className="text-textPrimary text-xl">Produtos</h1>
-      <Link href={ROUTES.PAGES.ORDERS.CREATE} className="text-3xl">
-        <FiPlusCircle></FiPlusCircle>
-      </Link>
-    </section>
+    <>
+      <section className="my-2 flex justify-between items-center text-textPrimary">
+        <h1 className="text-textPrimary text-xl">Produtos</h1>
+        <Link href={ROUTES.PAGES.ORDERS.CREATE} className="text-3xl">
+          <FiPlusCircle></FiPlusCircle>
+        </Link>
+      </section>
+
+      <div className="grid-cols-1 divide-y divide-separator pt-2">
+        {order.OrderProduct.map((orderProduct) => (
+          <ProductCard
+            key={`product${orderProduct.productId}-order${orderProduct.orderId}`}
+            name={orderProduct.product.name}
+            amount={orderProduct.amount}
+          ></ProductCard>
+        ))}
+      </div>
+    </>
   );
 };

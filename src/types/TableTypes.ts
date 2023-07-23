@@ -25,9 +25,25 @@ export type TableSectionType = {
   orders: OrderType[];
 };
 
+export type ProductType = {
+  id: number;
+  name: string;
+  image: string | undefined;
+  price: number;
+};
+
+export type OrderProductType = {
+  amount: number;
+  comment: string;
+  product: ProductType;
+  orderId: number;
+  productId: number;
+};
+
 export type OrderType = {
   id: number;
   name: string;
   creator: UserType;
   Table: SimpleTableType;
+  OrderProduct: OrderProductType[];
 };

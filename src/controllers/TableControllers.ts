@@ -52,6 +52,11 @@ export class TableController {
     return this.prisma.order.findUnique({
       where: { id },
       include: {
+        OrderProduct: {
+          include: {
+            product: true,
+          },
+        },
         creator: {
           select: {
             id: true,
