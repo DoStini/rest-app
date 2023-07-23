@@ -4,12 +4,27 @@ import { TableController } from "@/controllers/TableControllers";
 import { currentTime } from "@/helpers/time";
 import { SimpleTableType } from "@/types/TableTypes";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { FiArrowLeft, FiFolderPlus } from "react-icons/fi";
 import Button from "@/components/Button";
+import ROUTES from "@/helpers/constants/Routes";
 
 export default async function CreateOrder() {
-  const controller = new TableController();
-  const tables = await controller.listAllTables();
+  "use server";
+  const tables = await TableController.listAllTables();
+
+  async function saveOrder(data: FormData) {
+    "use server";
+
+    const { table: rawTable, name: rawName } = Object.fromEntries(
+      data.entries()
+    );
+    const table = parseInt(rawTable.toString());
+    const name = rawName.toString();
+    await TableController.addOrder(name, table, 3);
+
+    redirect(ROUTES.PAGES.ORDERS.ROOT);
+  }
 
   return (
     <form className="text-textPrimary flex flex-col w-full">
@@ -33,6 +48,7 @@ export default async function CreateOrder() {
       <section className="my-2">
         <h4 className="font-bold">Nome da Conta</h4>
         <input
+          name="name"
           type="text"
           required
           placeholder="Nome da conta..."
@@ -46,7 +62,7 @@ export default async function CreateOrder() {
         type={"submit"}
         text={"Criar Nova Conta"}
         preElement={<FiFolderPlus />}
-        action={undefined}
+        action={saveOrder}
       />
     </form>
   );

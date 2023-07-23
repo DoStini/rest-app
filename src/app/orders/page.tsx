@@ -1,26 +1,39 @@
+"use client";
 import { OrderCard } from "@/components/Cards";
 import CommonHeader from "@/components/orders/CommonHeader";
 import { TableController } from "@/controllers/TableControllers";
+import ROUTES from "@/helpers/constants/Routes";
+import { fetcher } from "@/helpers/fetcher";
 import { TableSectionType } from "@/types/TableTypes";
 import Link from "next/link";
 import { FiPlusCircle } from "react-icons/fi";
+import useSWR, { SWRConfig } from "swr";
 
-export default async function TablesList() {
-  const controller = new TableController();
-  const activeTables = await controller.findActiveTables();
+export const revalidate = 0;
+
+export default function TablesList() {
+  const { data, isLoading } = useSWR(ROUTES.API.ORDERS.ROOT, fetcher);
+
+  if (isLoading) {
+    return <></>;
+  }
+
+  const { tables } = data;
 
   return (
     <>
-      <Header></Header>
+      <Header />
       <div>
-        {activeTables.map((table) => (
-          <TableSection
-            key={table.name}
-            name={table.name}
-            orders={table.orders}
-            ordersCount={table._count.orders}
-          />
-        ))}
+        {tables
+          .filter((table) => table._count.orders)
+          .map((table) => (
+            <TableSection
+              key={table.name}
+              name={table.name}
+              orders={table.orders}
+              ordersCount={table._count.orders}
+            />
+          ))}
       </div>
     </>
   );

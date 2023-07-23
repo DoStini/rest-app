@@ -3,17 +3,19 @@ import { PrismaClient } from "@prisma/client";
 import { getPrismaClient } from "@prisma/client/runtime/library";
 
 export class TableController {
-  prisma: PrismaClient;
+  static prisma: PrismaClient;
 
-  constructor() {
-    this.prisma = new PrismaClient();
+  static {
+    if (!this.prisma) {
+      this.prisma = new PrismaClient();
+    }
   }
 
-  async listAllTables() {
+  static async listAllTables() {
     return this.prisma.table.findMany();
   }
 
-  async findActiveTables() {
+  static async findActiveTables() {
     const tables = await this.prisma.table.findMany({
       include: {
         orders: {
@@ -29,5 +31,14 @@ export class TableController {
     return tables;
   }
 
-  static async findTableById(id: string) {}
+  static async addOrder(name: string, tableId: number, userId: number) {
+    const created = await this.prisma.order.create({
+      data: {
+        name,
+        tableId,
+        userId,
+      },
+    });
+    console.log(created);
+  }
 }
