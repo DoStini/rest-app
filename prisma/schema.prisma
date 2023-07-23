@@ -39,6 +39,7 @@ model Product {
   name          String
   image         String?
   price         Decimal        @db.Decimal(12, 2)
+  position      Int            @default(autoincrement())
   orderCategory OrderCategory
   orderProduct  OrderProduct[]
 }
