@@ -1,8 +1,10 @@
 export type TableType = {
   id: number;
   name: string;
-  active: number;
-  accounts: OrderType[];
+  orders: OrderType[];
+  _count: {
+    orders: number;
+  };
 };
 
 export type SimpleTableType = {

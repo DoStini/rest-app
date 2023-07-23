@@ -5,6 +5,7 @@ import { TableController } from "@/controllers/TableControllers";
 import ROUTES from "@/helpers/constants/Routes";
 import { fetcher } from "@/helpers/fetcher";
 import { TableSectionType } from "@/types/TableTypes";
+import { SwrOrdersType } from "@/types/swrTypes";
 import Link from "next/link";
 import { FiPlusCircle } from "react-icons/fi";
 import useSWR, { SWRConfig } from "swr";
@@ -12,7 +13,10 @@ import useSWR, { SWRConfig } from "swr";
 export const revalidate = 0;
 
 export default function TablesList() {
-  const { data, isLoading } = useSWR(ROUTES.API.ORDERS.ROOT, fetcher);
+  const { data, isLoading }: SwrOrdersType = useSWR(
+    ROUTES.API.ORDERS.ROOT,
+    fetcher
+  );
 
   if (isLoading) {
     return <></>;
