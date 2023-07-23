@@ -56,6 +56,9 @@ export class TableController {
           include: {
             product: true,
           },
+          orderBy: {
+            createdAt: "asc",
+          },
         },
         creator: {
           select: {
