@@ -61,11 +61,12 @@ export default function CounterInput({
       </div>
 
       <div
-        className={`text-2xl pl-4 ${
-          value > 0 ? "text-success" : "text-warning"
-        } ${valueChanged ? "cursor-pointer" : "invisible"} ${
-          disabled && "cursor-not-allowed text-separator"
-        } `}
+        className={`text-2xl pl-4 
+          ${disabled && "cursor-not-allowed text-separator"} 
+          ${valueChanged ? "cursor-pointer" : "invisible"} 
+          ${value > 0 && !disabled && "text-success"}
+          ${value <= 0 && !disabled && "text-warning"}
+        `}
         onClick={() => onChangeSave(value)}
       >
         {value > 0 ? (
