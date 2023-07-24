@@ -13,10 +13,21 @@ export class ProductsController {
     return this.prisma.product.findMany();
   }
 
-  static async listProductByCategory() {
+  static async listProductByCategoryWithOrder(orderId: number) {
     return this.prisma.category.findMany({
       include: {
-        products: true,
+        products: {
+          include: {
+            orderProduct: {
+              where: {
+                orderId,
+              },
+              select: {
+                amount: true,
+              },
+            },
+          },
+        },
       },
     });
   }

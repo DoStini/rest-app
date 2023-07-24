@@ -102,11 +102,9 @@ const ProductSection = ({
             key={`product${orderProduct.productId}-order${orderProduct.orderId}`}
             name={orderProduct.product.name}
             amount={orderProduct.amount}
-            loading={isLoading}
-            onChangeSave={(amount) => {
-              setIsLoading(true);
-              onAmountChanged(order.id, orderProduct.product.id, amount);
-            }}
+            orderId={order.id}
+            productId={orderProduct.productId}
+            refresh={refresh}
           ></ProductCard>
         ))}
       </div>

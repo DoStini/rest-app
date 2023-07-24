@@ -1,5 +1,9 @@
 import { AiOutlineRight } from "react-icons/ai";
 import CounterInput from "./CounterInput";
+import { useEffect, useState } from "react";
+import { jsonPost } from "@/helpers/api";
+import ROUTES from "@/helpers/constants/Routes";
+import { useRouter } from "next/navigation";
 
 type LinkCardType = {
   title: string;
@@ -8,9 +12,10 @@ type LinkCardType = {
 
 type ProductCardType = {
   name: string;
+  orderId: number;
+  productId: number;
   amount: number;
-  onChangeSave: (amount: number) => void;
-  loading: boolean;
+  refresh: () => Promise<any>;
 };
 
 export function OrderCard({ title, description }: LinkCardType) {
@@ -28,10 +33,22 @@ export function OrderCard({ title, description }: LinkCardType) {
 
 export function ProductCard({
   name,
+  orderId,
+  productId,
   amount,
-  onChangeSave,
-  loading,
+  refresh,
 }: ProductCardType) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onAmountChanged = (
+    orderId: number,
+    productId: number,
+    amount: number
+  ) =>
+    jsonPost(ROUTES.API.ORDERS.UPDATE(orderId, productId), { amount }).then(
+      () => refresh().then(() => setIsLoading(false))
+    );
+
   return (
     <div className="p-4 md:p-5 bg-primary">
       <div className="text-textSecondary text-sm flex flex-row justify-between items-center">
@@ -40,8 +57,11 @@ export function ProductCard({
           defaultValue={amount}
           min={0}
           max={Infinity}
-          onChangeSave={onChangeSave}
-          disabled={loading}
+          onChangeSave={(amount) => {
+            setIsLoading(true);
+            onAmountChanged(orderId, productId, amount);
+          }}
+          disabled={isLoading}
         ></CounterInput>
       </div>
     </div>

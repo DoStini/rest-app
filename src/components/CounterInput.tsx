@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiMinusCircle, FiPlusCircle } from "react-icons/fi";
-import { AiFillCheckSquare, AiFillDelete } from "react-icons/ai";
+import { AiFillCheckSquare, AiFillDelete, AiOutlineUndo } from "react-icons/ai";
+import { IoArrowUndoCircle } from "react-icons/io5";
 
 type CounterInputType = {
   defaultValue: number;
@@ -23,6 +24,10 @@ export default function CounterInput({
     [value, defaultValue]
   );
 
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
+
   const decrement = () => {
     if (value <= min || disabled) {
       return;
@@ -41,27 +46,18 @@ export default function CounterInput({
   return (
     <div className="flex flex-row text-textSecondary items-center">
       <div
-        className={`text-xl px-2 cursor-pointer ${
-          disabled && "cursor-not-allowed text-separator"
-        }`}
-        onClick={decrement}
+        className={`text-2xl
+          ${disabled && "cursor-not-allowed text-separator"} 
+          ${valueChanged ? "cursor-pointer" : "invisible"} 
+          ${!disabled && "text-warning"}
+        `}
+        onClick={() => setValue(defaultValue)}
       >
-        <FiMinusCircle></FiMinusCircle>
-      </div>
-
-      <div className="text-md">{value}</div>
-
-      <div
-        className={`text-xl px-2 cursor-pointer ${
-          disabled && "cursor-not-allowed text-separator"
-        }`}
-        onClick={increment}
-      >
-        <FiPlusCircle></FiPlusCircle>
+        <AiOutlineUndo></AiOutlineUndo>
       </div>
 
       <div
-        className={`text-2xl pl-4 
+        className={`text-2xl pl-3
           ${disabled && "cursor-not-allowed text-separator"} 
           ${valueChanged ? "cursor-pointer" : "invisible"} 
           ${value > 0 && !disabled && "text-success"}
@@ -74,6 +70,26 @@ export default function CounterInput({
         ) : (
           <AiFillDelete></AiFillDelete>
         )}
+      </div>
+
+      <div
+        className={`text-xl px-2 cursor-pointer ${
+          disabled && "cursor-not-allowed text-separator"
+        }`}
+        onClick={decrement}
+      >
+        <FiMinusCircle></FiMinusCircle>
+      </div>
+
+      <div className="text-md w-4 text-right">{value}</div>
+
+      <div
+        className={`text-xl px-2 cursor-pointer ${
+          disabled && "cursor-not-allowed text-separator"
+        }`}
+        onClick={increment}
+      >
+        <FiPlusCircle></FiPlusCircle>
       </div>
     </div>
   );

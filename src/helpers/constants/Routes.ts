@@ -11,6 +11,7 @@ const ROUTES = {
     ORDERS: {
       ROOT: "/api/orders",
       BY_ID: (id: string) => `/api/orders/${id}`,
+      BY_ID_WITH_CATEGORIES: (id: string) => `/api/orders/${id}/categories`,
       UPDATE: (orderId: number, productId: number) =>
         `/api/orders/${orderId}/update/${productId}`,
     },
