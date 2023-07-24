@@ -30,6 +30,7 @@ export default function AddProductPage({ params }: { params: { id: string } }) {
 
   const [selected, setSelected] = useState(0);
   const [initialLoad, setInitialLoad] = useState(false);
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     if (data?.data.categories && !initialLoad) {
@@ -52,9 +53,11 @@ export default function AddProductPage({ params }: { params: { id: string } }) {
 
   const { order, categories } = data.data;
 
-  const products = categories.find(
-    (category) => category.id === selected
-  )?.products;
+  const products = categories
+    .find((category) => category.id === selected)
+    ?.products.filter((product) =>
+      product.name.toLowerCase().includes(filter.toLowerCase())
+    );
 
   if (!products) {
     return <></>;
@@ -68,6 +71,11 @@ export default function AddProductPage({ params }: { params: { id: string } }) {
         categories={categories}
         selected={selected}
       ></Categories>
+      <input
+        className="w-full text-sm text-textPrimary bg-secondary mt-2 p-2 focus:outline-none"
+        onChange={(evt) => setFilter(evt.target.value)}
+        placeholder="Produto a pesquisar..."
+      ></input>
       <ProductList
         products={products}
         refresh={refresh}
@@ -88,7 +96,7 @@ const Categories = ({
 }) => {
   return (
     <div className="grid grid-cols-3 gap-5">
-      {produdcts.map((category, index) => (
+      {produdcts.map((category) => (
         <div
           className={`text-textSecondary text-xs p-3 max-w-sm text-center cursor-pointer
             ${
