@@ -2,6 +2,7 @@
 import { OrderCard } from "@/components/Cards";
 import CommonHeader from "@/components/orders/CommonHeader";
 import { TableController } from "@/controllers/TableControllers";
+import { REFRESH_INTERVAL } from "@/helpers/api";
 import ROUTES from "@/helpers/constants/Routes";
 import { fetcher } from "@/helpers/fetcher";
 import { TableSectionType } from "@/types/TableTypes";
@@ -15,7 +16,8 @@ export const revalidate = 0;
 export default function TablesList() {
   const { data, isLoading }: SwrOrdersType = useSWR<FetcherOrdersType>(
     ROUTES.API.ORDERS.ROOT,
-    fetcher
+    fetcher,
+    { refreshInterval: REFRESH_INTERVAL }
   );
 
   if (isLoading || !data) {

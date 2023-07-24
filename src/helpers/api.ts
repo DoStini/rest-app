@@ -9,3 +9,5 @@ export const jsonPost = (url: string, body: any) => {
     body: JSON.stringify(body),
   });
 };
+
+export const REFRESH_INTERVAL = 1000;

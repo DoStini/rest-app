@@ -3,7 +3,7 @@ import { OrderCard, ProductCard } from "@/components/Cards";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
 import { TableController } from "@/controllers/TableControllers";
-import { jsonPost } from "@/helpers/api";
+import { REFRESH_INTERVAL, jsonPost } from "@/helpers/api";
 import ROUTES from "@/helpers/constants/Routes";
 import { fetcher } from "@/helpers/fetcher";
 import { redirectNotFound } from "@/helpers/router";
@@ -22,7 +22,8 @@ export default function OrderPage({ params }: { params: { id: string } }) {
 
   const { data, isLoading }: SwrOrderType = useSWR<FetcherOrderType>(
     ROUTES.API.ORDERS.BY_ID(id),
-    fetcher
+    fetcher,
+    { refreshInterval: REFRESH_INTERVAL }
   );
   const { mutate } = useSWRConfig();
   const refresh = () => mutate(ROUTES.API.ORDERS.BY_ID(id));
@@ -88,7 +89,10 @@ const ProductSection = ({
     <>
       <section className="my-2 flex justify-between items-center text-textPrimary">
         <h1 className="text-textPrimary text-xl">Produtos</h1>
-        <Link href={ROUTES.PAGES.ORDERS.CREATE} className="text-3xl">
+        <Link
+          href={ROUTES.PAGES.ORDERS.ADD_BY_ID(order.id)}
+          className="text-3xl"
+        >
           <FiPlusCircle></FiPlusCircle>
         </Link>
       </section>
@@ -99,11 +103,9 @@ const ProductSection = ({
             key={`product${orderProduct.productId}-order${orderProduct.orderId}`}
             name={orderProduct.product.name}
             amount={orderProduct.amount}
-            loading={isLoading}
-            onChangeSave={(amount) => {
-              setIsLoading(true);
-              onAmountChanged(order.id, orderProduct.product.id, amount);
-            }}
+            orderId={order.id}
+            productId={orderProduct.productId}
+            refresh={refresh}
           ></ProductCard>
         ))}
       </div>

@@ -1,4 +1,8 @@
-import { TableSectionType, TableType } from "@/types/TableTypes";
+import {
+  SimpleOrderType,
+  TableSectionType,
+  TableType,
+} from "@/types/TableTypes";
 import { PrismaClient } from "@prisma/client";
 import { getPrismaClient } from "@prisma/client/runtime/library";
 
@@ -46,6 +50,20 @@ export class TableController {
     });
 
     return created;
+  }
+
+  static getSimpleOrder(id: number) {
+    return this.prisma.order.findUnique({
+      where: { id },
+      include: {
+        Table: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
   }
 
   static getOrder(id: number) {
