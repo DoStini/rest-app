@@ -3,7 +3,7 @@ import { OrderCard, ProductCard } from "@/components/Cards";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
 import { TableController } from "@/controllers/TableControllers";
-import { jsonPost } from "@/helpers/api";
+import { REFRESH_INTERVAL, jsonPost } from "@/helpers/api";
 import ROUTES from "@/helpers/constants/Routes";
 import { fetcher } from "@/helpers/fetcher";
 import { redirectNotFound } from "@/helpers/router";
@@ -22,7 +22,8 @@ export default function OrderPage({ params }: { params: { id: string } }) {
 
   const { data, isLoading }: SwrOrderType = useSWR<FetcherOrderType>(
     ROUTES.API.ORDERS.BY_ID(id),
-    fetcher
+    fetcher,
+    { refreshInterval: REFRESH_INTERVAL }
   );
   const { mutate } = useSWRConfig();
   const refresh = () => mutate(ROUTES.API.ORDERS.BY_ID(id));

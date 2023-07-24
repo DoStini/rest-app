@@ -26,7 +26,8 @@ export default function CounterInput({
 
   useEffect(() => {
     setValue(defaultValue);
-  }, [defaultValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [window.location.pathname]);
 
   const decrement = () => {
     if (value <= min || disabled) {

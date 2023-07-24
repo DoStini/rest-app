@@ -1,7 +1,7 @@
 "use client";
 import { ProductCard } from "@/components/Cards";
 import CommonHeader from "@/components/orders/CommonHeader";
-import { jsonPost } from "@/helpers/api";
+import { REFRESH_INTERVAL, jsonPost } from "@/helpers/api";
 import ROUTES from "@/helpers/constants/Routes";
 import { fetcher } from "@/helpers/fetcher";
 import { redirectNotFound } from "@/helpers/router";
@@ -22,7 +22,8 @@ export default function AddProductPage({ params }: { params: { id: string } }) {
   const { data, isLoading }: SwrCategoryPageType =
     useSwr<FetcherCategoryPageType>(
       ROUTES.API.ORDERS.BY_ID_WITH_CATEGORIES(id),
-      fetcher
+      fetcher,
+      { refreshInterval: REFRESH_INTERVAL }
     );
 
   const { mutate } = useSWRConfig();
@@ -125,7 +126,7 @@ const ProductList = ({
     <div className="grid-cols-1 divide-y divide-separator pt-2">
       {products?.map((product) => (
         <ProductCard
-          key={`${product}`}
+          key={`root-product-${product.id}`}
           name={product.name}
           amount={product.orderProduct.at(0)?.amount || 0}
           orderId={orderId}
