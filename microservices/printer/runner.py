@@ -28,19 +28,19 @@ printer = Usb(
 def printer_print_order(order):
     printer.text(f"Atendido por: {order['waiter']}\n")
     printer.text(f"Abertura: {order['openTime']}\n")
-    printer.text(f"Fecho: {order['closeTime']}")
+    printer.text(f"Fecho: {order['closeTime']}\n")
     printer.text("\nCompras: \n")
     for item in order["order"]:
         item_amount = "{:>2}".format(item["amount"])
-        item_name = "{:<20}".format(item["name"])
-        item_total = "{:>5}".format(item["total"])
-        item_price = "{:>4}".format(item["price"])
+        item_name = "{:<18}".format(item["name"])
+        item_total = "{:>6}".format(item["total"])
+        item_price = "{:>5}".format(item["price"])
 
         printer.text(
-            f"{item_name}      {item_amount} x {item_price}      {item_total}€\n")
+            f"{item_name}      {item_amount} x {item_price}€      {item_total}€\n")
 
     total = "{:>5}".format(order["total"])
-    printer.text(f"\n\nTotal: {total}\n\n\n")
+    printer.text(f"\n\nTotal: {total}€\n\n\n")
     printer.text("Obrigado pela sua visita!\n\n\n")
 
 
@@ -56,12 +56,12 @@ def print_order(order):
         # item_amount = "{:.2f}".format(item["amount"])
         item_name = "{:<20}".format(item["name"])
         item_total = "{:>5}".format(item["total"])
-        item_price = "{:>4}".format(item["price"])
+        item_price = "{:>5}".format(item["price"])
         print(
-            f"{item_name}      {item_amount} x {item_price}      {item_total}€")
+            f"{item_name}      {item_amount} x {item_price}€      {item_total}€")
 
     total = "{:>5}".format(order["total"])
-    print(f"\n\nTotal: {total}")
+    print(f"\n\nTotal: {total}€")
 
 
 try:
