@@ -1,52 +1,20 @@
-from confluent_kafka import Consumer
+from kafka import KafkaConsumer
 import json
+import dotenv
 
+config = {
+    **dotenv.dotenv_values(".env"),
+    **dotenv.dotenv_values(".env.local"),
+}
 
-def read_ccloud_config(config_file):
-    conf = {}
-    with open(config_file) as fh:
-        for line in fh:
-            line = line.strip()
-            if len(line) != 0 and line[0] != "#":
-                parameter, value = line.strip().split('=', 1)
-                conf[parameter] = value.strip()
-    return conf
-
-
-props = read_ccloud_config(".env.local")
-props["group.id"] = "python-group-1"
-props["auto.offset.reset"] = "earliest"
-
-consumer = Consumer(props)
+consumer = KafkaConsumer(
+    bootstrap_servers=config["KAFKA_SERVERS"],
+    security_protocol="SASL_SSL",
+    sasl_mechanism="PLAIN",
+    sasl_plain_username=config["KAFKA_USERNAME"],
+    sasl_plain_password=config["KAFKA_PASSWORD"],
+)
 consumer.subscribe(["order-print"])
-
-# value coming from the topic
-# const waiter = order.creator;
-# const initialTime = order.createdAt;
-# const closeTime = order.closedAt;
-
-# const mappedOrder = order.OrderProduct.map((item) => {
-#   return {
-#     name: item.product.name,
-#     amount: item.amount,
-#     price: item.product.price,
-#     total: round2(round2(item.product.price) * item.amount),
-#   };
-# });
-
-# print data coming from the topic
-# const waiter = order.creator;
-# const initialTime = order.createdAt;
-# const closeTime = order.closedAt;
-
-# const mappedOrder = order.OrderProduct.map((item) => {
-#   return {
-#     name: item.product.name,
-#     amount: item.amount,
-#     price: item.product.price,
-#     total: round2(round2(item.product.price) * item.amount),
-#   };
-# });
 
 
 def print_order(order):
@@ -70,10 +38,10 @@ def print_order(order):
 
 
 try:
-    while True:
-        msg = consumer.poll(1.0)
-        if msg is not None and msg.error() is None:
-            json_data = json.loads(msg.value().decode('utf-8'))
+    for msg in consumer:
+        print(msg)
+        if msg is not None:
+            json_data = json.loads(msg.value.decode('utf-8'))
             print(json_data)
 
             print_order(json_data)
