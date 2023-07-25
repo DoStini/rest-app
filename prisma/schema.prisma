@@ -26,6 +26,8 @@ model Order {
   OrderProduct OrderProduct[]
   Table        Table?         @relation(fields: [tableId], references: [id])
   tableId      Int?
+  createdAt    DateTime       @default(now()) @db.Timestamp(6)
+  closedAt     DateTime?      @db.Timestamp(6)
 }
 
 model Category {
