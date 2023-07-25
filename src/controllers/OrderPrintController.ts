@@ -1,4 +1,5 @@
 import { Kafka } from "kafkajs";
+import { TableController } from "./TableControllers";
 
 export class OrderPrintController {
   static async SendKafkaMessage() {
@@ -15,9 +16,12 @@ export class OrderPrintController {
 
     const producer = kafka.producer();
     await producer.connect();
+
+    const order = await TableController.getOrder(8);
+
     return await producer.send({
       topic: "order-print",
-      messages: [{ value: "Hello KafkaJS user!" }],
+      messages: [{ value: JSON.stringify(order) }],
     });
   }
 }
