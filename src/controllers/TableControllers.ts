@@ -45,7 +45,13 @@ export class TableController {
           },
         },
         _count: {
-          select: { orders: true },
+          select: {
+            orders: {
+              where: {
+                closed: false,
+              },
+            },
+          },
         },
       },
     });
