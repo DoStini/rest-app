@@ -8,6 +8,8 @@ config = {
     **dotenv.dotenv_values(".env.local"),
 }
 
+print("Printer service started")
+
 consumer = KafkaConsumer(
     bootstrap_servers=config["KAFKA_SERVERS"],
     security_protocol="SASL_SSL",
@@ -17,12 +19,18 @@ consumer = KafkaConsumer(
 )
 consumer.subscribe(["order-print"])
 
+print("Connected to kafka service")
+
+
 printer = Usb(
     int(config["PRINTER_ID_VENDOR"], 16),
     int(config["PRINTER_ID_PRODUCT"], 16),
     in_ep=int(config["PRINTER_IN_EP"], 16),
     out_ep=int(config["PRINTER_OUT_EP"], 16),
 )
+
+printer.text("\n")
+print("Printer connected")
 
 
 def printer_print_order(order):

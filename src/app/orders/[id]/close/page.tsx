@@ -1,15 +1,11 @@
+import { Printer as PrinterService } from "@/app/services/Printer";
 import Button from "@/components/Button";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
 import { TableController } from "@/controllers/TableControllers";
 import ROUTES from "@/helpers/constants/Routes";
 import { formatTime } from "@/helpers/time";
-import { ProductOrderType } from "@/types/ProductTypes";
-import {
-  FinalOrderProductType,
-  FinalOrderType,
-  SimpleOrderType,
-} from "@/types/TableTypes";
+import { FinalOrderProductType, SimpleOrderType } from "@/types/TableTypes";
 
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -36,6 +32,7 @@ export default async function CloseOrderPage({
   const closeOrder = async () => {
     "use server";
     await TableController.closeOrder(id);
+    await PrinterService.printOrder(order);
     redirect(ROUTES.PAGES.ORDERS.ROOT);
   };
 
