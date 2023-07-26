@@ -1,11 +1,11 @@
-export function currentTime(): string {
-  const currentDate = new Date();
+export function formatTime(date?: Date): string {
+  const currentDate = date || new Date();
   const hours = String(currentDate.getHours()).padStart(2, "0");
   const minutes = String(currentDate.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
 }
 
-export function dateWithTime(date: Date | undefined): string {
+export function formatDateWithTime(date?: Date): string {
   const currentDate = date || new Date();
   const hours = String(currentDate.getHours()).padStart(2, "0");
   const minutes = String(currentDate.getMinutes()).padStart(2, "0");

@@ -26,6 +26,8 @@ export default function TablesList() {
 
   const tables = data?.data;
 
+  console.log(tables.filter((table) => table._count.orders));
+
   return (
     <>
       <Header />

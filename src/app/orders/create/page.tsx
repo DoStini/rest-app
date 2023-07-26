@@ -1,7 +1,7 @@
 import Divider from "@/components/orders/Divider";
 import CommonHeader from "@/components/orders/CommonHeader";
 import { TableController } from "@/controllers/TableControllers";
-import { currentTime } from "@/helpers/time";
+import { formatTime } from "@/helpers/time";
 import { SimpleTableType } from "@/types/TableTypes";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -38,7 +38,7 @@ export default async function CreateOrder() {
 
       <section className="my-2">
         <h4 className="font-bold">Hora de Entrada</h4>
-        <p>{currentTime()}</p>
+        <p>{formatTime()}</p>
       </section>
       <Divider />
 
