@@ -82,8 +82,6 @@ try:
             print_order(json_data)
             printer_print_order(json_data)
             printer.cut()
-            printer_print_order(json_data)
-            printer.cut()
 
 
 except KeyboardInterrupt:
