@@ -1,150 +1,118 @@
-"use client";
-import { ProductCard } from "@/components/Cards";
 import CommonHeader from "@/components/orders/CommonHeader";
-import { REFRESH_INTERVAL, jsonPost } from "@/helpers/api";
+import Divider from "@/components/orders/Divider";
+import { TableController } from "@/controllers/TableControllers";
 import ROUTES from "@/helpers/constants/Routes";
-import { fetcher } from "@/helpers/fetcher";
-import { redirectNotFound } from "@/helpers/router";
-import { CategoryType, ProductOrderType } from "@/types/ProductTypes";
-import { SimpleOrderType } from "@/types/TableTypes";
-import { FetcherCategoryPageType, SwrCategoryPageType } from "@/types/swrTypes";
+import { formatTime } from "@/helpers/time";
+import { ProductOrderType } from "@/types/ProductTypes";
+import {
+  FinalOrderProductType,
+  FinalOrderType,
+  SimpleOrderType,
+} from "@/types/TableTypes";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { notFound } from "next/navigation";
 import { FiArrowLeft } from "react-icons/fi";
-import useSwr, { useSWRConfig } from "swr";
 
-export default function AddProductPage({ params }: { params: { id: string } }) {
-  const router = useRouter();
+export default async function CloseOrderPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const { id: idRaw } = params;
 
-  const { id } = params;
-  const { data, isLoading }: SwrCategoryPageType =
-    useSwr<FetcherCategoryPageType>(
-      ROUTES.API.ORDERS.BY_ID_WITH_CATEGORIES(id),
-      fetcher,
-      { refreshInterval: REFRESH_INTERVAL }
-    );
-
-  const { mutate } = useSWRConfig();
-  const refresh = () => mutate(ROUTES.API.ORDERS.BY_ID_WITH_CATEGORIES(id));
-
-  const [selected, setSelected] = useState(0);
-  const [initialLoad, setInitialLoad] = useState(false);
-  const [filter, setFilter] = useState("");
-
-  useEffect(() => {
-    if (data?.data.categories && !initialLoad) {
-      setSelected(data.data.categories[0].id);
-      setInitialLoad(true);
-    }
-  }, [data, initialLoad]);
-
-  if (isLoading) {
-    return <></>;
+  if (!idRaw) {
+    return notFound();
   }
 
-  if (!data) {
-    return redirectNotFound(router);
+  const id = parseInt(idRaw);
+  if (isNaN(id)) {
+    return notFound();
   }
 
-  if (data.status === 404) {
-    return redirectNotFound(router);
-  }
-
-  const { order, categories } = data.data;
-
-  const products = categories
-    .find((category) => category.id === selected)
-    ?.products.filter((product) =>
-      product.name.toLowerCase().includes(filter.toLowerCase())
-    );
-
-  if (!products) {
-    return <></>;
-  }
+  const order = await TableController.generateOrder(id);
 
   return (
-    <div>
-      <Header order={order} selected={selected}></Header>;
-      <Categories
-        setSelected={setSelected}
-        categories={categories}
-        selected={selected}
-      ></Categories>
-      <input
-        className="w-full text-sm text-textPrimary bg-secondary mt-2 p-2 focus:outline-none"
-        onChange={(evt) => setFilter(evt.target.value)}
-        placeholder="Produto a pesquisar..."
-      ></input>
-      <ProductList
-        products={products}
-        refresh={refresh}
-        orderId={order.id}
-      ></ProductList>
+    <div className="text-textPrimary">
+      <Header order={order}></Header>
+      <section className="my-2">
+        <h4 className="font-bold">Responsável</h4>
+        <p>{order.creator.username}</p>
+      </section>
+      <Divider />
+
+      <section className="my-2">
+        <h4 className="font-bold">Hora de Entrada</h4>
+        <p>{formatTime(order.createdAt)}</p>
+      </section>
+      <Divider />
+
+      <section className="my-2">
+        <h4 className="font-bold">Hora de Fecho</h4>
+        <p>{formatTime()}</p>
+      </section>
+      <Divider />
+
+      <OrderSection orderProducts={order.finalProducts}></OrderSection>
     </div>
   );
 }
 
-const Categories = ({
-  categories: produdcts,
-  selected,
-  setSelected,
+const OrderSection = ({
+  orderProducts,
 }: {
-  categories: CategoryType[];
-  selected: number;
-  setSelected: (id: number) => void;
+  orderProducts: FinalOrderProductType[];
 }) => {
   return (
-    <div className="grid grid-cols-3 gap-5">
-      {produdcts.map((category) => (
-        <div
-          className={`text-textSecondary text-xs p-3 max-w-sm text-center cursor-pointer
-            ${
-              category.id === selected ? "text-bold bg-primary" : "bg-tertiary"
-            }`}
-          key={category.id}
-          onClick={() => setSelected(category.id)}
-        >
-          {category.name}
-        </div>
-      ))}
+    <section className="my-2 ">
+      <h1 className="text-textPrimary text-xl">Produtos</h1>
+      <div className="flex flex-col font-light text-sm text-textSecondary">
+        {orderProducts.map((product, index) => (
+          <div key={product.id} className="w-full grid grid-cols-12 gap-2">
+            <ProductLine
+              product={product}
+              index={index}
+              orderProducts={orderProducts}
+            />
+
+            <div
+              className={`flex col-span-3 md:col-span-2 lg:col-span-1 justify-end items-center px-3 bg-primary text-xs ${
+                index < orderProducts.length - 1 && "border-b border-separator"
+              }`}
+            >
+              {product.total} €
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+const ProductLine = ({
+  product,
+  index,
+  orderProducts,
+}: {
+  product: FinalOrderProductType;
+  index: number;
+  orderProducts: FinalOrderProductType[];
+}) => {
+  return (
+    <div
+      className={`flex justify-between col-span-9 md:col-span-10 lg:col-span-11 py-2 px-3 bg-primary ${
+        index < orderProducts.length - 1 && "border-b border-separator"
+      }`}
+    >
+      <div>{product.name}</div>
+      <div className="text-xs flex justify-end items-center">
+        {product.amount} x {product.price} €
+      </div>
     </div>
   );
 };
 
-const ProductList = ({
-  orderId,
-  products,
-  refresh,
-}: {
-  orderId: number;
-  products: ProductOrderType[];
-  refresh: () => Promise<any>;
-}) => {
-  return (
-    <div className="grid-cols-1 divide-y divide-separator pt-2">
-      {products?.map((product) => (
-        <ProductCard
-          key={`root-product-${product.id}`}
-          name={product.name}
-          amount={product.orderProduct.at(0)?.amount || 0}
-          orderId={orderId}
-          productId={product.id}
-          refresh={refresh}
-        ></ProductCard>
-      ))}
-    </div>
-  );
-};
-
-const Header = ({
-  order,
-  selected,
-}: {
-  order: SimpleOrderType;
-  selected: number;
-}) => {
+const Header = ({ order }: { order: SimpleOrderType }) => {
   return (
     <CommonHeader>
       <Link href={ROUTES.PAGES.ORDERS.BY_ID(order.id)} className="text-3xl">

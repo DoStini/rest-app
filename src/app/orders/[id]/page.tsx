@@ -1,5 +1,7 @@
 "use client";
+import Button from "@/components/Button";
 import { OrderCard, ProductCard } from "@/components/Cards";
+import LinkButton from "@/components/LinkButton";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
 import { TableController } from "@/controllers/TableControllers";
@@ -12,7 +14,12 @@ import { FetcherOrderType, SwrOrderType } from "@/types/swrTypes";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FiArrowLeft, FiPlusCircle } from "react-icons/fi";
+import {
+  FiArrowLeft,
+  FiFolderPlus,
+  FiPlusCircle,
+  FiPrinter,
+} from "react-icons/fi";
 import useSWR, { useSWRConfig } from "swr";
 
 export default function OrderPage({ params }: { params: { id: string } }) {
@@ -43,7 +50,7 @@ export default function OrderPage({ params }: { params: { id: string } }) {
   const order = data.data;
 
   return (
-    <div className="text-textPrimary">
+    <div className="text-textPrimary h-full flex flex-col">
       <Header order={order} />
       <section className="my-2">
         <h4 className="font-bold">Responsável</h4>
@@ -52,6 +59,13 @@ export default function OrderPage({ params }: { params: { id: string } }) {
       <Divider />
 
       <ProductSection order={order} refresh={refresh}></ProductSection>
+
+      <LinkButton
+        className="bg-warning text-textSecondary m-auto mt-10"
+        href={ROUTES.PAGES.ORDERS.CLOSE_BY_ID(order.id)}
+        text="Confirmar e imprimir talão"
+        preElement={<FiPrinter />}
+      />
     </div>
   );
 }

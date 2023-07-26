@@ -21,6 +21,11 @@ export type UserType = {
   createdAt: Date;
 };
 
+export type SimpleUserType = {
+  id: number;
+  username: string;
+};
+
 export type TableSectionType = {
   name: string;
   ordersCount: number;
@@ -33,6 +38,24 @@ export type OrderProductType = {
   product: ProductType;
   orderId: number;
   productId: number;
+};
+
+export type FinalOrderProductType = {
+  id: number;
+  name: string;
+  amount: number;
+  price: string;
+  total: string;
+};
+
+export type FinalOrderType = {
+  id: number;
+  name: string;
+  createdAt: Date;
+  creator: SimpleUserType;
+  Table: SimpleTableType | null;
+  finalProducts: FinalOrderProductType[];
+  total: number;
 };
 
 export type SimpleOrderType = {

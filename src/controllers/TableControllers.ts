@@ -1,10 +1,14 @@
+import { round2 } from "@/helpers/math";
+import { formatDateWithTime } from "@/helpers/time";
 import {
+  FinalOrderType,
   SimpleOrderType,
   TableSectionType,
   TableType,
 } from "@/types/TableTypes";
 import { PrismaClient } from "@prisma/client";
 import { getPrismaClient } from "@prisma/client/runtime/library";
+import { notFound } from "next/navigation";
 
 export class TableController {
   static prisma: PrismaClient;
@@ -92,6 +96,31 @@ export class TableController {
         },
       },
     });
+  }
+
+  static async generateOrder(id: number): Promise<FinalOrderType> {
+    const order = await TableController.getOrder(id);
+    if (!order) return notFound();
+
+    const mappedOrder = order.OrderProduct.map((item) => {
+      return {
+        id: item.productId,
+        name: item.product.name,
+        amount: item.amount,
+        price: item.product.price.toFixed(2),
+        total: round2(round2(item.product.price) * item.amount).toFixed(2),
+      };
+    });
+
+    const total = order?.OrderProduct.reduce((acc, item) => {
+      return round2(acc + round2(round2(item.product.price) * item.amount));
+    }, 0);
+
+    return {
+      ...order,
+      finalProducts: mappedOrder,
+      total: total,
+    };
   }
 
   static async updateOrder(orderId: number, productId: number, amount: number) {

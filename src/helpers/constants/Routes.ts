@@ -5,6 +5,7 @@ const ROUTES = {
       CREATE: "/orders/create",
       BY_ID: (id: string | number) => `/orders/${id}`,
       ADD_BY_ID: (id: number) => `/orders/${id}/add`,
+      CLOSE_BY_ID: (id: number) => `/orders/${id}/close`,
     },
   },
   API: {

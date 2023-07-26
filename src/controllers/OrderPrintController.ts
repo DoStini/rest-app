@@ -1,10 +1,10 @@
 import { Kafka } from "kafkajs";
 import { TableController } from "./TableControllers";
 import { round2 } from "@/helpers/math";
-import { dateWithTime } from "@/helpers/time";
+import { formatDateWithTime } from "@/helpers/time";
 
 export class OrderPrintController {
-  static async GenerateOrder() {
+  static async PrintOrder() {
     const kafka = new Kafka({
       clientId: "server",
       brokers: [process.env.SERVER!],
@@ -23,8 +23,8 @@ export class OrderPrintController {
     if (!order) return;
 
     const waiter = order.creator.username;
-    const openTime = dateWithTime(order.createdAt);
-    const closeTime = dateWithTime(order.closedAt || new Date());
+    const openTime = formatDateWithTime(order.createdAt);
+    const closeTime = formatDateWithTime(order.closedAt || new Date());
 
     const mappedOrder = order.OrderProduct.map((item) => {
       return {
