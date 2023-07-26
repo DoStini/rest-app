@@ -55,7 +55,7 @@ export type FinalOrderType = {
   creator: SimpleUserType;
   Table: SimpleTableType | null;
   finalProducts: FinalOrderProductType[];
-  total: number;
+  total: string;
 };
 
 export type SimpleOrderType = {

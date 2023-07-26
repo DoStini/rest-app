@@ -19,6 +19,7 @@ import {
   FiFolderPlus,
   FiPlusCircle,
   FiPrinter,
+  FiShoppingCart,
 } from "react-icons/fi";
 import useSWR, { useSWRConfig } from "swr";
 
@@ -63,8 +64,8 @@ export default function OrderPage({ params }: { params: { id: string } }) {
       <LinkButton
         className="bg-warning text-textSecondary m-auto mt-10"
         href={ROUTES.PAGES.ORDERS.CLOSE_BY_ID(order.id)}
-        text="Confirmar e imprimir talão"
-        preElement={<FiPrinter />}
+        text="Fechar conta"
+        preElement={<FiShoppingCart />}
       />
     </div>
   );
