@@ -17,13 +17,13 @@ export type SimpleTableType = {
 export type UserType = {
   id: number;
   username: string;
-  password: string;
-  createdAt: Date;
+  name: string;
 };
 
 export type SimpleUserType = {
   id: number;
   username: string;
+  name: string;
 };
 
 export type TableSectionType = {

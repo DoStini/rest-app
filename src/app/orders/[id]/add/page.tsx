@@ -8,6 +8,7 @@ import { redirectNotFound } from "@/helpers/router";
 import { CategoryType, ProductOrderType } from "@/types/ProductTypes";
 import { SimpleOrderType } from "@/types/TableTypes";
 import { FetcherCategoryPageType, SwrCategoryPageType } from "@/types/swrTypes";
+import { UserProfile, withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,7 +16,13 @@ import { useEffect, useMemo, useState } from "react";
 import { FiArrowLeft } from "react-icons/fi";
 import useSwr, { useSWRConfig } from "swr";
 
-export default function AddProductPage({ params }: { params: { id: string } }) {
+export default withPageAuthRequired(function AddProductPage({
+  params,
+  user,
+}: {
+  params: { id: string };
+  user: UserProfile;
+}) {
   const router = useRouter();
 
   const { id } = params;
@@ -45,11 +52,13 @@ export default function AddProductPage({ params }: { params: { id: string } }) {
   }
 
   if (!data) {
-    return redirectNotFound(router);
+    redirectNotFound(router);
+    return <></>;
   }
 
   if (data.status === 404) {
-    return redirectNotFound(router);
+    redirectNotFound(router);
+    return <></>;
   }
 
   const { order, categories } = data.data;
@@ -84,7 +93,7 @@ export default function AddProductPage({ params }: { params: { id: string } }) {
       ></ProductList>
     </div>
   );
-}
+});
 
 const Categories = ({
   categories: produdcts,

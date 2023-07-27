@@ -1,6 +1,7 @@
 import Divider from "@/components/orders/Divider";
 import CommonHeader from "@/components/orders/CommonHeader";
 import { TableController } from "@/controllers/TableControllers";
+import { UserController } from "@/controllers/UserController";
 import { formatTime } from "@/helpers/time";
 import { SimpleTableType } from "@/types/TableTypes";
 import Link from "next/link";
@@ -8,20 +9,34 @@ import { redirect } from "next/navigation";
 import { FiArrowLeft, FiFolderPlus } from "react-icons/fi";
 import Button from "@/components/Button";
 import ROUTES from "@/helpers/constants/Routes";
+import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 
-export default async function CreateOrder() {
+export default withPageAuthRequired(async function CreateOrder() {
   "use server";
+  const session = await getSession();
   const tables = await TableController.listAllTables();
 
   async function saveOrder(data: FormData) {
     "use server";
+
+    const session = await getSession();
 
     const { table: rawTable, name: rawName } = Object.fromEntries(
       data.entries()
     );
     const table = parseInt(rawTable.toString());
     const name = rawName.toString();
-    await TableController.addOrder(name, table, 3);
+
+    const userSession = session?.user;
+    if (!userSession) {
+      redirect(ROUTES.API.AUTH.LOGIN);
+    }
+    const user = await UserController.findOrCreateUser(
+      userSession.nickname,
+      userSession.name
+    );
+
+    await TableController.addOrder(name, table, user.id);
 
     redirect(ROUTES.PAGES.ORDERS.ROOT);
   }
@@ -32,7 +47,7 @@ export default async function CreateOrder() {
 
       <section className="my-2">
         <h4 className="font-bold">Responsável</h4>
-        <p>André</p> {/* Get from auth */}
+        <p>{session?.user.name}</p>
       </section>
       <Divider />
 
@@ -66,7 +81,7 @@ export default async function CreateOrder() {
       />
     </form>
   );
-}
+});
 
 const Header = () => {
   return (

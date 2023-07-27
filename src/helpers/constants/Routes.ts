@@ -9,6 +9,9 @@ const ROUTES = {
     },
   },
   API: {
+    AUTH: {
+      LOGIN: "/api/auth/login",
+    },
     ORDERS: {
       ROOT: "/api/orders",
       BY_ID: (id: string) => `/api/orders/${id}`,

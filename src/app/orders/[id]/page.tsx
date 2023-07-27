@@ -8,9 +8,10 @@ import { TableController } from "@/controllers/TableControllers";
 import { REFRESH_INTERVAL, jsonPost } from "@/helpers/api";
 import ROUTES from "@/helpers/constants/Routes";
 import { fetcher } from "@/helpers/fetcher";
-import { redirectNotFound } from "@/helpers/router";
+import { redirectLogin, redirectNotFound } from "@/helpers/router";
 import { OrderType, TableSectionType } from "@/types/TableTypes";
 import { FetcherOrderType, SwrOrderType } from "@/types/swrTypes";
+import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -23,12 +24,16 @@ import {
 } from "react-icons/fi";
 import useSWR, { useSWRConfig } from "swr";
 
-export default function OrderPage({ params }: { params: { id: string } }) {
+export default withPageAuthRequired(function OrderPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const router = useRouter();
 
   const { id } = params;
 
-  const { data, isLoading }: SwrOrderType = useSWR<FetcherOrderType>(
+  const { data, isLoading, error }: SwrOrderType = useSWR<FetcherOrderType>(
     ROUTES.API.ORDERS.BY_ID(id),
     fetcher,
     { refreshInterval: REFRESH_INTERVAL }
@@ -36,16 +41,18 @@ export default function OrderPage({ params }: { params: { id: string } }) {
   const { mutate } = useSWRConfig();
   const refresh = () => mutate(ROUTES.API.ORDERS.BY_ID(id));
 
-  if (isLoading) {
+  if (error?.status === 401) {
+    redirectLogin(router);
     return <></>;
   }
 
-  if (!data) {
-    return redirectNotFound(router);
+  if (error?.status === 404) {
+    redirectNotFound(router);
+    return <></>;
   }
 
-  if (data.status === 404) {
-    return redirectNotFound(router);
+  if (isLoading || !data) {
+    return <></>;
   }
 
   const order = data.data;
@@ -55,7 +62,7 @@ export default function OrderPage({ params }: { params: { id: string } }) {
       <Header order={order} />
       <section className="my-2">
         <h4 className="font-bold">Responsável</h4>
-        <p>{order.creator.username}</p>
+        <p>{order.creator.name}</p>
       </section>
       <Divider />
 
@@ -69,7 +76,7 @@ export default function OrderPage({ params }: { params: { id: string } }) {
       />
     </div>
   );
-}
+});
 
 const Header = ({ order }: { order: OrderType }) => {
   return (

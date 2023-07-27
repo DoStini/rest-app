@@ -24,7 +24,7 @@ export class Printer {
         {
           value: JSON.stringify({
             order: order.finalProducts,
-            waiter: order.creator.username,
+            waiter: order.creator.name,
             openTime: formatDateWithTime(order.createdAt),
             closeTime: formatDateWithTime(),
             total: order.total,
