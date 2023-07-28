@@ -33,9 +33,12 @@ export default withPageAuthRequired(async function CloseOrderPage({
 
   const order = await TableController.generateOrder(id);
 
-  const closeOrder = async () => {
+  const closeOrder = async (data: FormData) => {
     "use server";
-    await TableController.closeOrder(id);
+    const orderId = parseInt(data.get("orderId")?.toString() || "");
+
+    const order = await TableController.generateOrder(orderId);
+    await TableController.closeOrder(orderId);
     await PrinterService.printOrder(order);
     redirect(ROUTES.PAGES.ORDERS.ROOT);
   };
@@ -67,6 +70,7 @@ export default withPageAuthRequired(async function CloseOrderPage({
       ></OrderSection>
 
       <form>
+        <input type="hidden" name="orderId" value={order.id} />
         <Button
           className="bg-warning text-textSecondary m-auto mt-10"
           text="Confirmar e imprimir conta"

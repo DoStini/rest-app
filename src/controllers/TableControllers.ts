@@ -14,6 +14,7 @@ import {
   getPrismaClient,
 } from "@prisma/client/runtime/library";
 import { notFound } from "next/navigation";
+import { DayController } from "./DayController";
 
 export class TableController {
   static prisma: PrismaClient;
@@ -34,8 +35,12 @@ export class TableController {
         orders: {
           where: {
             closed: false,
+            day: {
+              closed: false,
+            },
           },
           include: {
+            day: true,
             creator: {
               select: {
                 id: true,
@@ -60,15 +65,18 @@ export class TableController {
   }
 
   static async addOrder(name: string, tableId: number, userId: number) {
-    const created = await this.prisma.order.create({
-      data: {
-        name,
-        tableId,
-        userId,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const day = await DayController.currentDay(tx);
+      if (!day) throw new Error("No day open");
+      return await tx.order.create({
+        data: {
+          name,
+          tableId,
+          userId,
+          dayId: day.id,
+        },
+      });
     });
-
-    return created;
   }
 
   static getSimpleOrder(id: number) {
@@ -199,14 +207,18 @@ export class TableController {
       const order = await this.getOrder(id, tx);
       if (!order) throw new Error("Order not found");
 
+      const total = this.calculateTotal(order);
+
       await tx.order.update({
         where: { id },
         data: {
           closedAt: new Date(),
           closed: true,
-          closedTotal: this.calculateTotal(order),
+          closedTotal: total,
         },
       });
+
+      await DayController.incrementCurrentTotal(tx, total);
 
       const affectedOrderProducts = await tx.orderProduct.findMany({
         where: { order: { id } },

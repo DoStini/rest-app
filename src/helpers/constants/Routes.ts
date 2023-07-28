@@ -1,5 +1,9 @@
 const ROUTES = {
   PAGES: {
+    DAY: {
+      ROOT: "/",
+      CREATE: "/create",
+    },
     ORDERS: {
       ROOT: "/orders",
       CREATE: "/orders/create",
