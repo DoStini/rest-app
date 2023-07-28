@@ -6,25 +6,29 @@ import { TableController } from "@/controllers/TableControllers";
 import ROUTES from "@/helpers/constants/Routes";
 import { formatTime } from "@/helpers/time";
 import { FinalOrderProductType, SimpleOrderType } from "@/types/TableTypes";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { UserProfile } from "@auth0/nextjs-auth0/client";
 
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { FiArrowLeft, FiPrinter } from "react-icons/fi";
 
-export default async function CloseOrderPage({
+// @ts-ignore
+export default withPageAuthRequired(async function CloseOrderPage({
   params,
 }: {
   params: { id: string };
 }) {
+  "use server";
   const { id: idRaw } = params;
 
   if (!idRaw) {
-    return notFound();
+    notFound();
   }
 
   const id = parseInt(idRaw);
   if (isNaN(id)) {
-    return notFound();
+    notFound();
   }
 
   const order = await TableController.generateOrder(id);
@@ -41,7 +45,7 @@ export default async function CloseOrderPage({
       <Header order={order}></Header>
       <section className="my-2">
         <h4 className="font-bold">Responsável</h4>
-        <p>{order.creator.username}</p>
+        <p>{order.creator.name}</p>
       </section>
       <Divider />
 
@@ -73,7 +77,7 @@ export default async function CloseOrderPage({
       </form>
     </div>
   );
-}
+});
 
 const OrderSection = ({
   orderProducts,

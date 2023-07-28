@@ -1,32 +1,39 @@
 "use client";
 import { OrderCard } from "@/components/Cards";
 import CommonHeader from "@/components/orders/CommonHeader";
-import { TableController } from "@/controllers/TableControllers";
 import { REFRESH_INTERVAL } from "@/helpers/api";
 import ROUTES from "@/helpers/constants/Routes";
 import { fetcher } from "@/helpers/fetcher";
+import { redirectLogin } from "@/helpers/router";
 import { TableSectionType } from "@/types/TableTypes";
 import { FetcherOrdersType, SwrOrdersType } from "@/types/swrTypes";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FiPlusCircle } from "react-icons/fi";
-import useSWR, { SWRConfig } from "swr";
+import useSWR from "swr";
 
 export const revalidate = 0;
 
-export default function TablesList() {
-  const { data, isLoading }: SwrOrdersType = useSWR<FetcherOrdersType>(
+export default withPageAuthRequired(function TablesList() {
+  const router = useRouter();
+
+  const { data, isLoading, error }: SwrOrdersType = useSWR<FetcherOrdersType>(
     ROUTES.API.ORDERS.ROOT,
     fetcher,
     { refreshInterval: REFRESH_INTERVAL }
   );
+
+  if (error?.status === 401) {
+    redirectLogin(router);
+    return <></>;
+  }
 
   if (isLoading || !data) {
     return <></>;
   }
 
   const tables = data?.data;
-
-  console.log(tables.filter((table) => table._count.orders));
 
   return (
     <>
@@ -45,7 +52,7 @@ export default function TablesList() {
       </div>
     </>
   );
-}
+});
 
 const Header = () => {
   return (
@@ -76,7 +83,7 @@ const TableSection = ({ name, orders, ordersCount }: TableSectionType) => {
                 <OrderCard
                   key={order.id}
                   title={order.name}
-                  description={order.creator.username}
+                  description={order.creator.name}
                 />
               </Link>
             </div>

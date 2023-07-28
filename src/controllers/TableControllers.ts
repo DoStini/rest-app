@@ -40,6 +40,7 @@ export class TableController {
               select: {
                 id: true,
                 username: true,
+                name: true,
               },
             },
           },
@@ -114,6 +115,7 @@ export class TableController {
           select: {
             id: true,
             username: true,
+            name: true,
           },
         },
         Table: {

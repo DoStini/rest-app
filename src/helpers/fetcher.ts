@@ -7,7 +7,10 @@ export const fetcher = async <T>(
   const data = await response.json();
 
   if (!response.ok) {
-    throw data;
+    throw {
+      status: response.status,
+      data,
+    };
   }
 
   return {
