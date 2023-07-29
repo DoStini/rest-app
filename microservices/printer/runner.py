@@ -58,24 +58,22 @@ def printer_print_order(order):
     printer.text("Obrigado pela sua visita!\n\n\n")
 
 
-def print_order(order):
-    print(f"Atendido por: {order['waiter']}")
-    print("Abertura: " + order["openTime"])
-    print("Fecho: " + order["closeTime"])
-    print("\nCompras: ")
+def printer_print_day(order):
+    printer.text(f"Fecho do dia\n")
+    printer.text(f"Abertura: {order['openTime']}\n")
+    printer.text(f"Fecho: {order['closeTime']}\n")
+    printer.text("\Produtos: \n")
     for item in order["order"]:
-        # format the string to have 5 characters aligned right with spaces before
         item_amount = "{:>2}".format(item["amount"])
-
-        # item_amount = "{:.2f}".format(item["amount"])
-        item_name = "{:<20}".format(item["name"])
-        item_total = "{:>5}".format(item["total"])
+        item_name = "{:<18}".format(item["name"])
+        item_total = "{:>6}".format(item["total"])
         item_price = "{:>5}".format(item["price"])
-        print(
-            f"{item_name}      {item_amount} x {item_price}€      {item_total}€")
+
+        printer.text(
+            f"{item_name}      {item_amount} x {item_price}€      {item_total}€\n")
 
     total = "{:>5}".format(order["total"])
-    print(f"\n\nTotal: {total}€")
+    printer.text(f"\n\nTotal: {total}€\n\n\n")
 
 
 while True:
@@ -102,8 +100,10 @@ try:
             json_data = json.loads(msg.value.decode('utf-8'))
             print(json_data)
 
-            print_order(json_data)
-            printer_print_order(json_data)
+            if json_data["type"] == "order":
+                printer_print_order(json_data)
+            elif json_data["type"] == "day":
+                printer_print_day(json_data)
             printer.cut()
 
 except KeyboardInterrupt:
