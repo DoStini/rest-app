@@ -127,7 +127,7 @@ const ProductSection = ({
   );
 };
 
-export function ProductCard({ name, productId, amount }: ProductCardType) {
+function ProductCard({ name, productId, amount }: ProductCardType) {
   return (
     <div className="p-4 md:p-5 bg-primary">
       <div className="text-textSecondary text-sm flex flex-row justify-between items-center">
