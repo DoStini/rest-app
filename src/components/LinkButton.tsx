@@ -5,6 +5,7 @@ type ButtonType = {
   text: string;
   href: string;
   preElement: React.ReactNode;
+  disabled?: boolean;
 };
 
 export default function LinkButton({
@@ -12,11 +13,15 @@ export default function LinkButton({
   className,
   preElement: preIcon,
   text,
+  disabled,
 }: ButtonType) {
   return (
     <Link
       href={href}
-      className={`${
+      aria-disabled={disabled}
+      className={`
+      ${disabled && "!bg-separator"}
+      ${
         className || ""
       } flex flex-row text-md justify-center w-full py-3 max-w-md`}
     >

@@ -14,7 +14,7 @@ export default withPageAuthRequired(async function List() {
       <Header />
 
       {days.length === 0 ? (
-        <h4>No accounts found</h4>
+        <h4 className="my-5">Não há registos</h4>
       ) : (
         <div className="grid-cols-1 divide-y divide-separator my-5">
           {days.map((day) => (

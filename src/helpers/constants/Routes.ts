@@ -4,6 +4,7 @@ const ROUTES = {
       ROOT: "/",
       CREATE: "/create",
       STATS: "/list",
+      CLOSE: "/close",
     },
     ORDERS: {
       ROOT: "/orders",

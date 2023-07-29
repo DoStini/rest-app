@@ -34,12 +34,6 @@ export default withPageAuthRequired(async function Home() {
 
   const authorizedCloser = DayController.authorizedCloser(session.user);
 
-  const closeDay = async () => {
-    "use server";
-    await DayController.closeDay();
-    redirect(ROUTES.PAGES.DAY.CREATE);
-  };
-
   return (
     <div className="text-textPrimary">
       <Header day={day} />
@@ -77,16 +71,13 @@ export default withPageAuthRequired(async function Home() {
       />
 
       {authorizedCloser && (
-        <form>
-          <Button
-            className="bg-warning text-textSecondary m-auto mt-10"
-            text="Encerrar dia"
-            type="submit"
-            preElement={<FiAlertTriangle />}
-            disabled={openOrder}
-            action={closeDay}
-          />
-        </form>
+        <LinkButton
+          className="text-textSecondary bg-warning m-auto mt-10"
+          href={ROUTES.PAGES.DAY.CLOSE}
+          text="Encerrar dia"
+          preElement={<FiAlertTriangle />}
+          disabled={openOrder}
+        />
       )}
     </div>
   );

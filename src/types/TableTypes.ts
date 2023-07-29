@@ -1,3 +1,4 @@
+import { Decimal } from "@prisma/client/runtime/library";
 import { ProductType } from "./ProductTypes";
 
 export type TableType = {

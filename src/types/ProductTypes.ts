@@ -1,3 +1,5 @@
+import { Decimal } from "@prisma/client/runtime/library";
+
 export type CategoryType = {
   id: number;
   name: string;
@@ -8,7 +10,7 @@ export type ProductType = {
   id: number;
   name: string;
   image: string | undefined;
-  price: number;
+  price: number | Decimal;
 };
 
 export type ProductOrderType = {

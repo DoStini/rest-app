@@ -5,4 +5,6 @@ export type DayType = {
   name: string;
   total: Decimal;
   closed: boolean;
+  closedAt: Date | null;
+  createdAt: Date;
 };

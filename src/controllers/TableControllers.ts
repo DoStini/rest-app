@@ -1,12 +1,5 @@
 import { mulTwoDecimals, round2 } from "@/helpers/math";
-import { formatDateWithTime } from "@/helpers/time";
-import {
-  FinalOrderType,
-  OrderType,
-  SimpleOrderType,
-  TableSectionType,
-  TableType,
-} from "@/types/TableTypes";
+import { FinalOrderType } from "@/types/TableTypes";
 import { Prisma, PrismaClient } from "@prisma/client";
 import {
   Decimal,
@@ -27,6 +20,37 @@ export class TableController {
 
   static async listAllTables() {
     return this.prisma.table.findMany();
+  }
+
+  static async findOrderProducts(dayId: number) {
+    const amounts = await this.prisma.orderProduct.groupBy({
+      by: ["productId"],
+      where: {
+        order: {
+          dayId,
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+    const products = await this.prisma.product.findMany({
+      where: {
+        id: {
+          in: amounts.map((item) => item.productId),
+        },
+      },
+    });
+
+    return products.map((item) => {
+      const amount = amounts.find((a) => a.productId === item.id);
+      return {
+        ...item,
+        price: item.price.toFixed(2),
+        amount: amount?._sum.amount || 0,
+        total: mulTwoDecimals(amount?._sum.amount || 0, item.price).toFixed(2),
+      };
+    });
   }
 
   static async findActiveTables() {
@@ -136,10 +160,10 @@ export class TableController {
     });
   }
 
-  private static calculateTotal(order: {
-    OrderProduct: { product: { price: Decimal }; amount: number }[];
-  }) {
-    return order.OrderProduct.reduce((acc, item) => {
+  private static calculateTotal(
+    orderProducts: { product: { price: Decimal }; amount: number }[]
+  ) {
+    return orderProducts.reduce((acc, item) => {
       return round2(acc + round2(round2(item.product.price) * item.amount));
     }, 0);
   }
@@ -158,7 +182,7 @@ export class TableController {
       };
     });
 
-    const total = this.calculateTotal(order).toFixed(2);
+    const total = this.calculateTotal(order.OrderProduct).toFixed(2);
 
     return {
       ...order,
@@ -207,7 +231,7 @@ export class TableController {
       const order = await this.getOrder(id, tx);
       if (!order) throw new Error("Order not found");
 
-      const total = this.calculateTotal(order);
+      const total = this.calculateTotal(order.OrderProduct);
 
       await tx.order.update({
         where: { id },

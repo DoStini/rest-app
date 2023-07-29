@@ -2,9 +2,11 @@ import { Printer as PrinterService } from "@/app/services/Printer";
 import Button from "@/components/Button";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
+import { DayController } from "@/controllers/DayController";
 import { TableController } from "@/controllers/TableControllers";
 import ROUTES from "@/helpers/constants/Routes";
-import { formatTime } from "@/helpers/time";
+import { formatDateWithTime, formatTime } from "@/helpers/time";
+import { DayType } from "@/types/DayTypes";
 import { FinalOrderProductType, SimpleOrderType } from "@/types/TableTypes";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { UserProfile } from "@auth0/nextjs-auth0/client";
@@ -12,70 +14,71 @@ import { revalidatePath } from "next/cache";
 
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { FiArrowLeft, FiPrinter } from "react-icons/fi";
+import { FiAlertTriangle, FiArrowLeft, FiPrinter } from "react-icons/fi";
 
 export default withPageAuthRequired(async function CloseOrderPage({ params }) {
   "use server";
-  // TODO: FIX WHEN AUTH0 PR IS MERGED: https://github.com/auth0/nextjs-auth0/pull/1327
-  const idRaw = (params as unknown as { id: string }).id;
+  const day = await DayController.currentDay();
 
-  if (!idRaw) {
-    redirect("/404");
+  if (!day) {
+    redirect(ROUTES.PAGES.DAY.CREATE);
   }
+  const products = await TableController.findOrderProducts(day.id);
 
-  const id = parseInt(idRaw);
-  if (isNaN(id)) {
-    redirect("/404");
-  }
-
-  const order = await TableController.generateOrder(id);
-
-  const closeOrder = async (data: FormData) => {
+  const closeDay = async () => {
     "use server";
-    const orderId = parseInt(data.get("orderId")?.toString() || "");
+    const day = await DayController.currentDay();
+    if (!day) {
+      redirect(ROUTES.PAGES.DAY.CREATE);
+    }
+    const products = await TableController.findOrderProducts(day.id);
 
-    const order = await TableController.generateOrder(orderId);
-    await TableController.closeOrder(orderId);
-    await PrinterService.printOrder(order);
+    await DayController.closeDay();
+    await PrinterService.printDay(products, day);
 
-    revalidatePath(ROUTES.PAGES.ORDERS.ROOT);
-    redirect(ROUTES.PAGES.ORDERS.ROOT);
+    redirect(ROUTES.PAGES.DAY.CREATE);
   };
 
   return (
     <div className="text-textPrimary">
-      <Header order={order}></Header>
+      <Header day={day} />
+
       <section className="my-2">
-        <h4 className="font-bold">Responsável</h4>
-        <p>{order.creator.name}</p>
+        <h4 className="font-bold">Nome</h4>
+        <p>{day.name}</p>
+      </section>
+      <Divider />
+
+      <section className="my-2">
+        <h4 className="font-bold">Total</h4>
+        <p>{day.total.toFixed(2)} €</p>
       </section>
       <Divider />
 
       <section className="my-2">
         <h4 className="font-bold">Hora de Entrada</h4>
-        <p>{formatTime(order.createdAt)}</p>
+        <p>{formatDateWithTime(day.createdAt)}</p>
       </section>
       <Divider />
 
       <section className="my-2">
         <h4 className="font-bold">Hora de Fecho</h4>
-        <p>{formatTime()}</p>
+        <p>{formatDateWithTime()}</p>
       </section>
       <Divider />
 
       <OrderSection
-        total={order.total}
-        orderProducts={order.finalProducts}
+        total={day.total.toFixed(2)}
+        products={products}
       ></OrderSection>
 
       <form>
-        <input type="hidden" name="orderId" value={order.id} />
         <Button
-          className="bg-warning text-textSecondary m-auto mt-10"
-          text="Confirmar e imprimir conta"
+          className="bg-warning text-textSecondary m-auto my-10"
+          text="Fechar dia e imprimir"
           type="submit"
-          preElement={<FiPrinter />}
-          action={closeOrder}
+          preElement={<FiAlertTriangle />}
+          action={closeDay}
         />
       </form>
     </div>
@@ -83,17 +86,17 @@ export default withPageAuthRequired(async function CloseOrderPage({ params }) {
 });
 
 const OrderSection = ({
-  orderProducts,
+  products,
   total,
 }: {
-  orderProducts: FinalOrderProductType[];
+  products: FinalOrderProductType[];
   total: string;
 }) => {
   return (
     <section className="my-2">
       <h1 className="text-textPrimary text-xl">Produtos</h1>
       <div className="mt-3 flex flex-col font-light text-sm text-textSecondary">
-        {orderProducts.map((product, index) => (
+        {products.map((product) => (
           <div key={product.id} className="w-full grid grid-cols-12 gap-2">
             <ProductLine product={product} />
 
@@ -127,13 +130,13 @@ const ProductLine = ({ product }: { product: FinalOrderProductType }) => {
   );
 };
 
-const Header = ({ order }: { order: SimpleOrderType }) => {
+const Header = ({ day }: { day: DayType }) => {
   return (
     <CommonHeader>
-      <Link href={ROUTES.PAGES.ORDERS.BY_ID(order.id)} className="text-3xl">
+      <Link href={ROUTES.PAGES.DAY.ROOT} className="text-3xl">
         <FiArrowLeft />
       </Link>
-      <h1 className="text-2xl text-textPrimary">{`${order.Table?.name}, ${order.name}`}</h1>
+      <h1 className="text-2xl text-textPrimary">{day.name}</h1>
     </CommonHeader>
   );
 };
