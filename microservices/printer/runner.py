@@ -76,6 +76,22 @@ def printer_print_day(order):
     printer.text(f"\n\nTotal: {total}€\n\n\n")
 
 
+def printer_print_request(order):
+    printer.text(f"Pedido\n")
+    printer.text(f"Abertura: {order['openTime']}\n")
+    printer.text(f"Empregado: {order['waiter']}\n")
+    printer.text(f"Mesa: {order['table']}\n\n")
+    printer.text("Produtos: \n")
+    for item in order["order"]:
+        item_amount = "{:>2}".format(item["amount"])
+        item_name = "{:<18}".format(item["name"])
+
+        printer.text(
+            f"{item_amount} x {item_name}\n")
+
+    printer.text(f"\n\n\n")
+
+
 while True:
     try:
         startup()
@@ -104,6 +120,8 @@ try:
                 printer_print_order(json_data)
             elif json_data["type"] == "day":
                 printer_print_day(json_data)
+            elif json_data["type"] == "request":
+                printer_print_request(json_data)
             printer.cut()
 
 except KeyboardInterrupt:

@@ -11,6 +11,7 @@ export type ProductType = {
   name: string;
   image: string | undefined;
   price: number | Decimal;
+  category: CategoryType;
 };
 
 export type ProductOrderType = {

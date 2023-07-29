@@ -10,7 +10,7 @@ type LinkCardType = {
   description: string;
 };
 
-type ProductCardType = {
+export type ProductCardType = {
   name: string;
   orderId: number;
   productId: number;

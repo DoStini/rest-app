@@ -39,6 +39,7 @@ export type OrderProductType = {
   product: ProductType;
   orderId: number;
   productId: number;
+  orderedAmount: number;
 };
 
 export type FinalOrderProductType = {
@@ -72,4 +73,5 @@ export type OrderType = {
   Table: SimpleTableType;
   closed: boolean;
   OrderProduct: OrderProductType[];
+  createdAt: Date;
 };
