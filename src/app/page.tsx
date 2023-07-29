@@ -63,7 +63,7 @@ export default withPageAuthRequired(async function Home() {
       <Divider />
 
       <LinkButton
-        className="bg-warning text-textSecondary bg-success m-auto mt-10"
+        className="text-textSecondary bg-success m-auto mt-10"
         href={ROUTES.PAGES.ORDERS.ROOT}
         text="Contas"
         preElement={<FiShoppingCart />}

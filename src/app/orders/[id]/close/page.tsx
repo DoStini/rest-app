@@ -13,14 +13,10 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { FiArrowLeft, FiPrinter } from "react-icons/fi";
 
-// @ts-ignore
-export default withPageAuthRequired(async function CloseOrderPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default withPageAuthRequired(async function CloseOrderPage({ params }) {
   "use server";
-  const { id: idRaw } = params;
+  // TODO: FIX WHEN AUTH0 PR IS MERGED: https://github.com/auth0/nextjs-auth0/pull/1327
+  const idRaw = (params as unknown as { id: string }).id;
 
   if (!idRaw) {
     redirect("/404");
