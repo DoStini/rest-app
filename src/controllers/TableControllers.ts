@@ -250,6 +250,7 @@ export class TableController {
     return this.prisma.$transaction(async (tx) => {
       const order = await this.getOrder(orderId, tx);
       if (!order) throw new Error("Order not found");
+      if (!order.closed) throw new Error("Order is not closed");
 
       const total = order.closedTotal || 0;
 
@@ -270,6 +271,7 @@ export class TableController {
     await this.prisma.$transaction(async (tx) => {
       const order = await this.getOrder(id, tx);
       if (!order) throw new Error("Order not found");
+      if (order.closed) throw new Error("Order is already closed");
 
       const total = this.calculateTotal(order.OrderProduct);
 
