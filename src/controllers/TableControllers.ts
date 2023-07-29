@@ -1,12 +1,5 @@
 import { mulTwoDecimals, round2 } from "@/helpers/math";
-import { formatDateWithTime } from "@/helpers/time";
-import {
-  FinalOrderType,
-  OrderType,
-  SimpleOrderType,
-  TableSectionType,
-  TableType,
-} from "@/types/TableTypes";
+import { FinalOrderType } from "@/types/TableTypes";
 import { Prisma, PrismaClient } from "@prisma/client";
 import {
   Decimal,
@@ -14,6 +7,7 @@ import {
   getPrismaClient,
 } from "@prisma/client/runtime/library";
 import { notFound } from "next/navigation";
+import { DayController } from "./DayController";
 
 export class TableController {
   static prisma: PrismaClient;
@@ -28,14 +22,69 @@ export class TableController {
     return this.prisma.table.findMany();
   }
 
+  static async findOrderProducts(dayId: number) {
+    const amounts = await this.prisma.orderProduct.groupBy({
+      by: ["productId"],
+      where: {
+        order: {
+          dayId,
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+    const products = await this.prisma.product.findMany({
+      where: {
+        id: {
+          in: amounts.map((item) => item.productId),
+        },
+      },
+    });
+
+    return products.map((item) => {
+      const amount = amounts.find((a) => a.productId === item.id);
+      return {
+        ...item,
+        price: item.price.toFixed(2),
+        amount: amount?._sum.amount || 0,
+        total: mulTwoDecimals(amount?._sum.amount || 0, item.price).toFixed(2),
+      };
+    });
+  }
+
+  static findClosedOrders() {
+    return this.prisma.order.findMany({
+      where: {
+        closed: true,
+        day: {
+          closed: false,
+        },
+      },
+      include: {
+        creator: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
   static async findActiveTables() {
     const tables = await this.prisma.table.findMany({
       include: {
         orders: {
           where: {
             closed: false,
+            day: {
+              closed: false,
+            },
           },
           include: {
+            day: true,
             creator: {
               select: {
                 id: true,
@@ -60,15 +109,18 @@ export class TableController {
   }
 
   static async addOrder(name: string, tableId: number, userId: number) {
-    const created = await this.prisma.order.create({
-      data: {
-        name,
-        tableId,
-        userId,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const day = await DayController.currentDay(tx);
+      if (!day) throw new Error("No day open");
+      return await tx.order.create({
+        data: {
+          name,
+          tableId,
+          userId,
+          dayId: day.id,
+        },
+      });
     });
-
-    return created;
   }
 
   static getSimpleOrder(id: number) {
@@ -101,7 +153,7 @@ export class TableController {
   ) {
     const client = tx || this.prisma;
     return client.order.findUnique({
-      where: { id, closed: false },
+      where: { id },
       include: {
         OrderProduct: {
           include: {
@@ -128,10 +180,10 @@ export class TableController {
     });
   }
 
-  private static calculateTotal(order: {
-    OrderProduct: { product: { price: Decimal }; amount: number }[];
-  }) {
-    return order.OrderProduct.reduce((acc, item) => {
+  private static calculateTotal(
+    orderProducts: { product: { price: Decimal }; amount: number }[]
+  ) {
+    return orderProducts.reduce((acc, item) => {
       return round2(acc + round2(round2(item.product.price) * item.amount));
     }, 0);
   }
@@ -150,7 +202,7 @@ export class TableController {
       };
     });
 
-    const total = this.calculateTotal(order).toFixed(2);
+    const total = this.calculateTotal(order.OrderProduct).toFixed(2);
 
     return {
       ...order,
@@ -194,19 +246,45 @@ export class TableController {
     return updated;
   }
 
+  static reopenOrder(orderId: number) {
+    return this.prisma.$transaction(async (tx) => {
+      const order = await this.getOrder(orderId, tx);
+      if (!order) throw new Error("Order not found");
+      if (!order.closed) throw new Error("Order is not closed");
+
+      const total = order.closedTotal || 0;
+
+      await DayController.decrementCurrentTotal(tx, total);
+
+      await tx.order.update({
+        where: { id: orderId },
+        data: {
+          closed: false,
+          closedAt: null,
+          closedTotal: null,
+        },
+      });
+    });
+  }
+
   static async closeOrder(id: number) {
     await this.prisma.$transaction(async (tx) => {
       const order = await this.getOrder(id, tx);
       if (!order) throw new Error("Order not found");
+      if (order.closed) throw new Error("Order is already closed");
+
+      const total = this.calculateTotal(order.OrderProduct);
 
       await tx.order.update({
         where: { id },
         data: {
           closedAt: new Date(),
           closed: true,
-          closedTotal: this.calculateTotal(order),
+          closedTotal: total,
         },
       });
+
+      await DayController.incrementCurrentTotal(tx, total);
 
       const affectedOrderProducts = await tx.orderProduct.findMany({
         where: { order: { id } },

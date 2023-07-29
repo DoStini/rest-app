@@ -1,4 +1,5 @@
 "use client";
+import { openOrder, printOrder } from "@/actions/orders";
 import Button from "@/components/Button";
 import { OrderCard, ProductCard } from "@/components/Cards";
 import LinkButton from "@/components/LinkButton";
@@ -68,12 +69,24 @@ export default withPageAuthRequired(function OrderPage({
 
       <ProductSection order={order} refresh={refresh}></ProductSection>
 
-      <LinkButton
-        className="bg-warning text-textSecondary m-auto mt-10"
-        href={ROUTES.PAGES.ORDERS.CLOSE_BY_ID(order.id)}
-        text="Fechar conta"
-        preElement={<FiShoppingCart />}
-      />
+      {order.closed ? (
+        <form action={openOrder}>
+          <input type="hidden" name="orderId" value={order.id} />
+          <Button
+            type="submit"
+            className="bg-tertiary text-textSecondary m-auto mt-10"
+            text="Reabrir conta"
+            preElement={<FiShoppingCart />}
+          ></Button>
+        </form>
+      ) : (
+        <LinkButton
+          className="bg-warning text-textSecondary m-auto mt-10"
+          href={ROUTES.PAGES.ORDERS.CLOSE_BY_ID(order.id)}
+          text="Fechar conta"
+          preElement={<FiShoppingCart />}
+        />
+      )}
     </div>
   );
 });
@@ -96,27 +109,26 @@ const ProductSection = ({
   order: OrderType;
   refresh: () => Promise<any>;
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const onAmountChanged = (
-    orderId: number,
-    productId: number,
-    amount: number
-  ) =>
-    jsonPost(ROUTES.API.ORDERS.UPDATE(orderId, productId), { amount }).then(
-      () => refresh().then(() => setIsLoading(false))
-    );
-
   return (
     <>
       <section className="my-2 flex justify-between items-center text-textPrimary">
         <h1 className="text-textPrimary text-xl">Produtos</h1>
-        <Link
-          href={ROUTES.PAGES.ORDERS.ADD_BY_ID(order.id)}
-          className="text-3xl"
-        >
-          <FiPlusCircle></FiPlusCircle>
-        </Link>
+
+        {order.closed ? (
+          <form action={printOrder}>
+            <input type="hidden" name="orderId" value={order.id} />
+            <button type="submit" className="text-3xl">
+              <FiPrinter />
+            </button>
+          </form>
+        ) : (
+          <Link
+            href={ROUTES.PAGES.ORDERS.ADD_BY_ID(order.id)}
+            className="text-3xl"
+          >
+            <FiPlusCircle></FiPlusCircle>
+          </Link>
+        )}
       </section>
 
       <div className="grid-cols-1 divide-y divide-separator pt-2">
@@ -126,6 +138,7 @@ const ProductSection = ({
             name={orderProduct.product.name}
             amount={orderProduct.amount}
             orderId={order.id}
+            closed={order.closed}
             productId={orderProduct.productId}
             refresh={refresh}
           ></ProductCard>
