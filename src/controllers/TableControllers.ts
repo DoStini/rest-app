@@ -22,6 +22,29 @@ export class TableController {
     return this.prisma.table.findMany();
   }
 
+  static async requestOrder(
+    orderId: number,
+    amounts: { productId: number; amount: number }[]
+  ) {
+    return await Promise.all(
+      amounts.map(async (item) => {
+        await this.prisma.orderProduct.update({
+          where: {
+            productId_orderId: {
+              orderId,
+              productId: item.productId,
+            },
+          },
+          data: {
+            orderedAmount: {
+              increment: item.amount,
+            },
+          },
+        });
+      })
+    );
+  }
+
   static async findOrderProducts(dayId: number) {
     const amounts = await this.prisma.orderProduct.groupBy({
       by: ["productId"],
@@ -157,7 +180,11 @@ export class TableController {
       include: {
         OrderProduct: {
           include: {
-            product: true,
+            product: {
+              include: {
+                category: true,
+              },
+            },
           },
           orderBy: {
             createdAt: "asc",

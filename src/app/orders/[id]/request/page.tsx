@@ -1,21 +1,20 @@
 "use client";
-import { openOrder, printOrder } from "@/actions/orders";
+import { openOrder, printOrder, requestOrder } from "@/actions/orders";
 import Button from "@/components/Button";
-import { OrderCard, ProductCard } from "@/components/Cards";
+import { ProductCardType } from "@/components/Cards";
+import CounterInput from "@/components/CounterInput";
 import LinkButton from "@/components/LinkButton";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
-import { TableController } from "@/controllers/TableControllers";
-import { REFRESH_INTERVAL, jsonPost } from "@/helpers/api";
+import { REFRESH_INTERVAL } from "@/helpers/api";
 import ROUTES from "@/helpers/constants/Routes";
 import { fetcher } from "@/helpers/fetcher";
 import { redirectLogin, redirectNotFound } from "@/helpers/router";
 import { OrderType, TableSectionType } from "@/types/TableTypes";
 import { FetcherOrderType, SwrOrderType } from "@/types/swrTypes";
-import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0/client";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import {
   FiArrowLeft,
   FiFolderPlus,
@@ -58,43 +57,28 @@ export default withPageAuthRequired(function OrderPage({
 
   const order = data.data;
 
+  console.log(order);
+
   return (
     <div className="text-textPrimary h-full flex flex-col">
-      <Header order={order} />
-      <section className="my-2">
-        <h4 className="font-bold">Responsável</h4>
-        <p>{order.creator.name}</p>
-      </section>
-      <Divider />
+      <form action={requestOrder}>
+        <Header order={order} />
+        <section className="my-2">
+          <h4 className="font-bold">Responsável</h4>
+          <p>{order.creator.name}</p>
+        </section>
+        <Divider />
 
-      <ProductSection order={order} refresh={refresh}></ProductSection>
+        <ProductSection order={order} refresh={refresh}></ProductSection>
 
-      {order.closed ? (
-        <form action={openOrder}>
-          <input type="hidden" name="orderId" value={order.id} />
-          <Button
-            type="submit"
-            className="bg-tertiary text-textSecondary m-auto mt-10"
-            text="Reabrir conta"
-            preElement={<FiShoppingCart />}
-          ></Button>
-        </form>
-      ) : (
-        <>
-          <LinkButton
-            className="bg-tertiary text-textSecondary m-auto mt-10"
-            href={ROUTES.PAGES.ORDERS.REQUEST_BY_ID(order.id)}
-            text="Fazer pedido"
-            preElement={<FiPrinter />}
-          />
-          <LinkButton
-            className="bg-warning text-textSecondary m-auto mt-5"
-            href={ROUTES.PAGES.ORDERS.CLOSE_BY_ID(order.id)}
-            text="Fechar conta"
-            preElement={<FiShoppingCart />}
-          />
-        </>
-      )}
+        <input type="hidden" name="orderId" value={order.id} />
+        <Button
+          type="submit"
+          className="bg-tertiary text-textSecondary m-auto mt-10"
+          text="Imprimir pedido"
+          preElement={<FiPrinter />}
+        ></Button>
+      </form>
     </div>
   );
 });
@@ -120,31 +104,17 @@ const ProductSection = ({
   return (
     <>
       <section className="my-2 flex justify-between items-center text-textPrimary">
-        <h1 className="text-textPrimary text-xl">Produtos</h1>
-
-        {order.closed ? (
-          <form action={printOrder}>
-            <input type="hidden" name="orderId" value={order.id} />
-            <button type="submit" className="text-3xl">
-              <FiPrinter />
-            </button>
-          </form>
-        ) : (
-          <Link
-            href={ROUTES.PAGES.ORDERS.ADD_BY_ID(order.id)}
-            className="text-3xl"
-          >
-            <FiPlusCircle></FiPlusCircle>
-          </Link>
-        )}
+        <h1 className="text-textPrimary text-xl">Fazer pedido</h1>
       </section>
 
       <div className="grid-cols-1 divide-y divide-separator pt-2">
-        {order.OrderProduct.map((orderProduct) => (
+        {order.OrderProduct.filter(
+          (orderProduct) => orderProduct.product.category.name != "Bebidas"
+        ).map((orderProduct) => (
           <ProductCard
             key={`product${orderProduct.productId}-order${orderProduct.orderId}`}
             name={orderProduct.product.name}
-            amount={orderProduct.amount}
+            amount={orderProduct.amount - orderProduct.orderedAmount}
             orderId={order.id}
             closed={order.closed}
             productId={orderProduct.productId}
@@ -155,3 +125,20 @@ const ProductSection = ({
     </>
   );
 };
+
+export function ProductCard({ name, productId, amount }: ProductCardType) {
+  return (
+    <div className="p-4 md:p-5 bg-primary">
+      <div className="text-textSecondary text-sm flex flex-row justify-between items-center">
+        <h3>{name}</h3>
+        <CounterInput
+          name={productId.toString()}
+          defaultValue={amount}
+          min={0}
+          max={Infinity}
+          disabled={false}
+        ></CounterInput>
+      </div>
+    </div>
+  );
+}
