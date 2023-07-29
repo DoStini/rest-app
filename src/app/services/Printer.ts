@@ -1,6 +1,11 @@
+import { ProductsController } from "@/controllers/ProductsController";
 import { formatDateWithTime } from "@/helpers/time";
 import { DayType } from "@/types/DayTypes";
-import { FinalOrderProductType, FinalOrderType } from "@/types/TableTypes";
+import {
+  FinalOrderProductType,
+  FinalOrderType,
+  OrderType,
+} from "@/types/TableTypes";
 import { Kafka } from "kafkajs";
 
 export class Printer {
@@ -37,19 +42,7 @@ export class Printer {
   }
 
   static async printDay(products: FinalOrderProductType[], day: DayType) {
-    const kafka = new Kafka({
-      clientId: "server",
-      brokers: [process.env.SERVER!],
-      ssl: true,
-      sasl: {
-        mechanism: "plain",
-        username: process.env.KAFKA_USERNAME!,
-        password: process.env.KAFKA_PASSWORD!,
-      },
-    });
-
-    const producer = kafka.producer();
-    await producer.connect();
+    const producer = await Printer.KafkaProducer();
 
     return await producer.send({
       topic: "order-print",
@@ -65,5 +58,58 @@ export class Printer {
         },
       ],
     });
+  }
+
+  static async printRequest(
+    waiter: string,
+    openTime: Date,
+    tableName: string,
+    amounts: { productId: number; amount: number }[]
+  ) {
+    const producer = await Printer.KafkaProducer();
+
+    const amountsWithProducts = await Promise.all(
+      amounts.map(async (item) => {
+        const product = await ProductsController.findProductById(
+          item.productId
+        );
+        return {
+          name: product?.name,
+          amount: item.amount,
+        };
+      })
+    );
+
+    return await producer.send({
+      topic: "order-print",
+      messages: [
+        {
+          value: JSON.stringify({
+            type: "request",
+            order: amountsWithProducts,
+            waiter,
+            table: tableName,
+            openTime: formatDateWithTime(openTime),
+          }),
+        },
+      ],
+    });
+  }
+
+  private static async KafkaProducer() {
+    const kafka = new Kafka({
+      clientId: "server",
+      brokers: [process.env.SERVER!],
+      ssl: true,
+      sasl: {
+        mechanism: "plain",
+        username: process.env.KAFKA_USERNAME!,
+        password: process.env.KAFKA_PASSWORD!,
+      },
+    });
+
+    const producer = kafka.producer();
+    await producer.connect();
+    return producer;
   }
 }

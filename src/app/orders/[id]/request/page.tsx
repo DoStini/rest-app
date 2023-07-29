@@ -3,6 +3,7 @@ import { openOrder, printOrder, requestOrder } from "@/actions/orders";
 import Button from "@/components/Button";
 import { ProductCardType } from "@/components/Cards";
 import CounterInput from "@/components/CounterInput";
+import FormCounterInput from "@/components/FormCounterInput";
 import LinkButton from "@/components/LinkButton";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
@@ -131,13 +132,12 @@ export function ProductCard({ name, productId, amount }: ProductCardType) {
     <div className="p-4 md:p-5 bg-primary">
       <div className="text-textSecondary text-sm flex flex-row justify-between items-center">
         <h3>{name}</h3>
-        <CounterInput
+        <FormCounterInput
           name={productId.toString()}
           defaultValue={amount}
           min={0}
           max={Infinity}
-          disabled={false}
-        ></CounterInput>
+        />
       </div>
     </div>
   );

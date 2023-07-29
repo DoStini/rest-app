@@ -27,11 +27,19 @@ export const requestOrder = async (data: FormData) => {
     if (key === "orderId") continue;
     const productId = parseInt(key);
     const amount = parseInt(data.get(key)?.toString() || "");
+    if (!amount) continue;
     amounts.push({ productId, amount });
   }
 
+  const order = await TableController.getOrder(orderId);
+  if (!order) return;
+
+  const waiter = order.creator.name;
+  const openTime = order.createdAt;
+  const tableName = `${order.Table?.name}, ${order.name}`;
+
   await TableController.requestOrder(orderId, amounts);
+  await Printer.printRequest(waiter, openTime, tableName, amounts);
 
   redirect(ROUTES.PAGES.ORDERS.BY_ID(orderId));
-  // await Printer.printOrder(order);
 };

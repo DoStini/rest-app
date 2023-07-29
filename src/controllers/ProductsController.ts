@@ -9,6 +9,12 @@ export class ProductsController {
     }
   }
 
+  static async findProductById(id: number) {
+    return this.prisma.product.findUnique({
+      where: { id },
+    });
+  }
+
   static async listProducts() {
     return this.prisma.product.findMany();
   }

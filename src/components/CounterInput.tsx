@@ -7,9 +7,8 @@ type CounterInputType = {
   defaultValue: number;
   min: number;
   max: number;
-  name?: string;
   disabled: boolean;
-  onChangeSave?: (amount: number) => void;
+  onChangeSave: (amount: number) => void;
 };
 
 export default function CounterInput({
@@ -17,7 +16,6 @@ export default function CounterInput({
   min,
   max,
   disabled,
-  name,
   onChangeSave,
 }: CounterInputType) {
   const [value, setValue] = useState(defaultValue);
@@ -48,36 +46,32 @@ export default function CounterInput({
 
   return (
     <div className="flex flex-row text-textSecondary items-center">
-      {onChangeSave && (
-        <div
-          className={`text-2xl
+      <div
+        className={`text-2xl
           ${disabled && "cursor-not-allowed text-separator"} 
           ${valueChanged ? "cursor-pointer" : "invisible"} 
           ${!disabled && "text-warning"}
         `}
-          onClick={() => setValue(defaultValue)}
-        >
-          <AiOutlineUndo></AiOutlineUndo>
-        </div>
-      )}
+        onClick={() => setValue(defaultValue)}
+      >
+        <AiOutlineUndo></AiOutlineUndo>
+      </div>
 
-      {onChangeSave && (
-        <div
-          className={`text-2xl pl-3
+      <div
+        className={`text-2xl pl-3
           ${disabled && "cursor-not-allowed text-separator"} 
           ${valueChanged ? "cursor-pointer" : "invisible"} 
           ${value > 0 && !disabled && "text-success"}
           ${value <= 0 && !disabled && "text-warning"}
         `}
-          onClick={() => onChangeSave(value)}
-        >
-          {value > 0 ? (
-            <AiFillCheckSquare></AiFillCheckSquare>
-          ) : (
-            <AiFillDelete></AiFillDelete>
-          )}
-        </div>
-      )}
+        onClick={() => onChangeSave(value)}
+      >
+        {value > 0 ? (
+          <AiFillCheckSquare></AiFillCheckSquare>
+        ) : (
+          <AiFillDelete></AiFillDelete>
+        )}
+      </div>
 
       <div
         className={`text-xl px-2 cursor-pointer ${
@@ -89,7 +83,6 @@ export default function CounterInput({
       </div>
 
       <div className="text-md w-4 text-right">{value}</div>
-      <input value={value} hidden name={name}></input>
 
       <div
         className={`text-xl px-2 cursor-pointer ${

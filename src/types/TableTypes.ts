@@ -73,4 +73,5 @@ export type OrderType = {
   Table: SimpleTableType;
   closed: boolean;
   OrderProduct: OrderProductType[];
+  createdAt: Date;
 };
