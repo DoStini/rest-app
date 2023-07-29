@@ -87,7 +87,7 @@ export default withPageAuthRequired(function OrderPage({
 const Header = ({ order }: { order: OrderType }) => {
   return (
     <CommonHeader>
-      <Link href={ROUTES.PAGES.ORDERS.ROOT} className="text-3xl">
+      <Link href={ROUTES.PAGES.ORDERS.BY_ID(order.id)} className="text-3xl">
         <FiArrowLeft />
       </Link>
       <h1 className="text-2xl text-textPrimary">{`${order.Table.name}, ${order.name}`}</h1>
