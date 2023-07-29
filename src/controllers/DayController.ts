@@ -72,7 +72,7 @@ export class DayController {
     tx: PrismaTransacitonClient = this.prisma,
     amount: number | Decimal
   ) {
-    this.incrementCurrentTotal(tx, -amount);
+    await this.incrementCurrentTotal(tx, -amount);
   }
 
   static async currentDay(tx: PrismaTransacitonClient = this.prisma) {
