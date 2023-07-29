@@ -1,7 +1,7 @@
 type ButtonType = {
   className: string;
   type: "button" | "submit" | "reset" | undefined;
-  action: string | ((formData: FormData) => void) | undefined;
+  action?: string | ((formData: FormData) => void) | undefined;
   text: string;
   preElement: React.ReactNode;
   disabled?: boolean;

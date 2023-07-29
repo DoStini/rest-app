@@ -4,6 +4,7 @@ import { UserType } from "@/types/TableTypes";
 import { Claims } from "@auth0/nextjs-auth0";
 import { PrismaClient } from "@prisma/client";
 import { TableController } from "./TableControllers";
+import { Decimal } from "@prisma/client/runtime/library";
 
 export class DayController {
   static prisma: PrismaClient;
@@ -51,7 +52,7 @@ export class DayController {
 
   static async incrementCurrentTotal(
     tx: PrismaTransacitonClient = this.prisma,
-    amount: number
+    amount: number | Decimal
   ) {
     const day = await this.currentDay(tx);
     if (!day) throw new Error("No day open");
@@ -65,6 +66,13 @@ export class DayController {
         total: newTotal,
       },
     });
+  }
+
+  static async decrementCurrentTotal(
+    tx: PrismaTransacitonClient = this.prisma,
+    amount: number | Decimal
+  ) {
+    this.incrementCurrentTotal(tx, -amount);
   }
 
   static async currentDay(tx: PrismaTransacitonClient = this.prisma) {

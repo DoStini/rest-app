@@ -10,7 +10,7 @@ import { FetcherOrdersType, SwrOrdersType } from "@/types/swrTypes";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FiArrowLeft, FiPlusCircle } from "react-icons/fi";
+import { FiArrowLeft, FiPlusCircle, FiRotateCcw } from "react-icons/fi";
 import useSWR from "swr";
 
 export const revalidate = 0;
@@ -63,9 +63,14 @@ const Header = () => {
         </Link>
         <h1 className="text-2xl text-textPrimary pl-4">Contas ativas</h1>
       </div>
-      <Link href={ROUTES.PAGES.ORDERS.CREATE} className="text-3xl">
-        <FiPlusCircle></FiPlusCircle>
-      </Link>
+      <div className="flex flex-row items-center">
+        <Link href={ROUTES.PAGES.ORDERS.CLOSED} className="text-3xl">
+          <FiRotateCcw />
+        </Link>
+        <Link href={ROUTES.PAGES.ORDERS.CREATE} className="ml-5 text-3xl">
+          <FiPlusCircle></FiPlusCircle>
+        </Link>
+      </div>
     </CommonHeader>
   );
 };

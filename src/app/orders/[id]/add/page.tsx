@@ -64,6 +64,11 @@ export default withPageAuthRequired<{ params: { id: string } }>(
 
     const { order, categories } = data.data;
 
+    if (order.closed) {
+      router.push(ROUTES.PAGES.ORDERS.BY_ID(order.id));
+      return <></>;
+    }
+
     const products = categories
       .find((category) => category.id === selected)
       ?.products.filter((product) =>
@@ -139,6 +144,7 @@ const ProductList = ({
         <ProductCard
           key={`root-product-${product.id}`}
           name={product.name}
+          closed={false}
           amount={product.orderProduct.at(0)?.amount || 0}
           orderId={orderId}
           productId={product.id}

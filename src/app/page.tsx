@@ -20,7 +20,6 @@ export default withPageAuthRequired(async function Home() {
   const day = await DayController.currentDay();
   const orders = await TableController.findActiveTables();
   const openOrder = orders.find((order) => order._count.orders > 0) != null;
-  console.log(orders, openOrder);
 
   if (!day) {
     redirect(ROUTES.PAGES.DAY.CREATE);

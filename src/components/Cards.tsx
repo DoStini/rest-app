@@ -15,6 +15,7 @@ type ProductCardType = {
   orderId: number;
   productId: number;
   amount: number;
+  closed: boolean;
   refresh: () => Promise<any>;
 };
 
@@ -36,6 +37,7 @@ export function ProductCard({
   orderId,
   productId,
   amount,
+  closed,
   refresh,
 }: ProductCardType) {
   const [isLoading, setIsLoading] = useState(false);
@@ -53,16 +55,20 @@ export function ProductCard({
     <div className="p-4 md:p-5 bg-primary">
       <div className="text-textSecondary text-sm flex flex-row justify-between items-center">
         <h3>{name}</h3>
-        <CounterInput
-          defaultValue={amount}
-          min={0}
-          max={Infinity}
-          onChangeSave={(amount) => {
-            setIsLoading(true);
-            onAmountChanged(orderId, productId, amount);
-          }}
-          disabled={isLoading}
-        ></CounterInput>
+        {closed ? (
+          <p> {amount} </p>
+        ) : (
+          <CounterInput
+            defaultValue={amount}
+            min={0}
+            max={Infinity}
+            onChangeSave={(amount) => {
+              setIsLoading(true);
+              onAmountChanged(orderId, productId, amount);
+            }}
+            disabled={isLoading}
+          ></CounterInput>
+        )}
       </div>
     </div>
   );

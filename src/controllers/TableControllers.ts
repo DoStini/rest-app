@@ -53,6 +53,26 @@ export class TableController {
     });
   }
 
+  static findClosedOrders() {
+    return this.prisma.order.findMany({
+      where: {
+        closed: true,
+        day: {
+          closed: false,
+        },
+      },
+      include: {
+        creator: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
   static async findActiveTables() {
     const tables = await this.prisma.table.findMany({
       include: {
@@ -133,7 +153,7 @@ export class TableController {
   ) {
     const client = tx || this.prisma;
     return client.order.findUnique({
-      where: { id, closed: false },
+      where: { id },
       include: {
         OrderProduct: {
           include: {
@@ -224,6 +244,26 @@ export class TableController {
     });
 
     return updated;
+  }
+
+  static reopenOrder(orderId: number) {
+    return this.prisma.$transaction(async (tx) => {
+      const order = await this.getOrder(orderId, tx);
+      if (!order) throw new Error("Order not found");
+
+      const total = order.closedTotal || 0;
+
+      await DayController.decrementCurrentTotal(tx, total);
+
+      await tx.order.update({
+        where: { id: orderId },
+        data: {
+          closed: false,
+          closedAt: null,
+          closedTotal: null,
+        },
+      });
+    });
   }
 
   static async closeOrder(id: number) {

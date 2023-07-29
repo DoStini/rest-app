@@ -70,5 +70,6 @@ export type OrderType = {
   name: string;
   creator: UserType;
   Table: SimpleTableType;
+  closed: boolean;
   OrderProduct: OrderProductType[];
 };
