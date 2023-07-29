@@ -1,6 +1,6 @@
 import { AiOutlineRight } from "react-icons/ai";
 import CounterInput from "./CounterInput";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { jsonPost } from "@/helpers/api";
 import ROUTES from "@/helpers/constants/Routes";
 import { useRouter } from "next/navigation";

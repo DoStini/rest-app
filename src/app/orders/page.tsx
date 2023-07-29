@@ -10,7 +10,7 @@ import { FetcherOrdersType, SwrOrdersType } from "@/types/swrTypes";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FiPlusCircle } from "react-icons/fi";
+import { FiArrowLeft, FiPlusCircle } from "react-icons/fi";
 import useSWR from "swr";
 
 export const revalidate = 0;
@@ -57,7 +57,12 @@ export default withPageAuthRequired(function TablesList() {
 const Header = () => {
   return (
     <CommonHeader>
-      <h1 className="text-2xl text-textPrimary">Contas ativas</h1>
+      <div className="flex flex-row items-center">
+        <Link href={ROUTES.PAGES.DAY.ROOT} className="text-3xl">
+          <FiArrowLeft />
+        </Link>
+        <h1 className="text-2xl text-textPrimary pl-4">Contas ativas</h1>
+      </div>
       <Link href={ROUTES.PAGES.ORDERS.CREATE} className="text-3xl">
         <FiPlusCircle></FiPlusCircle>
       </Link>

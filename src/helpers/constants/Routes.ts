@@ -3,6 +3,7 @@ const ROUTES = {
     DAY: {
       ROOT: "/",
       CREATE: "/create",
+      STATS: "/list",
     },
     ORDERS: {
       ROOT: "/orders",

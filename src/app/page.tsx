@@ -1,4 +1,5 @@
 import Button from "@/components/Button";
+import LinkButton from "@/components/LinkButton";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
 import { DayController } from "@/controllers/DayController";
@@ -8,7 +9,12 @@ import { formatTime } from "@/helpers/time";
 import { DayType } from "@/types/DayTypes";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { redirect } from "next/navigation";
-import { FiAlertTriangle, FiPrinter } from "react-icons/fi";
+import {
+  FiAlertTriangle,
+  FiBarChart2,
+  FiPrinter,
+  FiShoppingCart,
+} from "react-icons/fi";
 
 export default withPageAuthRequired(async function Home() {
   const day = await DayController.currentDay();
@@ -55,6 +61,20 @@ export default withPageAuthRequired(async function Home() {
         <p>{formatTime(day.createdAt)}</p>
       </section>
       <Divider />
+
+      <LinkButton
+        className="bg-warning text-textSecondary bg-success m-auto mt-10"
+        href={ROUTES.PAGES.ORDERS.ROOT}
+        text="Contas"
+        preElement={<FiShoppingCart />}
+      />
+
+      <LinkButton
+        className="text-textSecondary bg-tertiary m-auto mt-10"
+        href={ROUTES.PAGES.DAY.STATS}
+        text="Estatísticas"
+        preElement={<FiBarChart2 />}
+      />
 
       {authorizedCloser && (
         <form>

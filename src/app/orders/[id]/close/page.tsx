@@ -23,12 +23,12 @@ export default withPageAuthRequired(async function CloseOrderPage({
   const { id: idRaw } = params;
 
   if (!idRaw) {
-    notFound();
+    redirect("/404");
   }
 
   const id = parseInt(idRaw);
   if (isNaN(id)) {
-    notFound();
+    redirect("/404");
   }
 
   const order = await TableController.generateOrder(id);

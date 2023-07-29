@@ -19,7 +19,7 @@ export default function Button({
     <button
       type={type}
       disabled={disabled}
-      className={`${disabled && "bg-separator"} ${
+      className={`${disabled && "!bg-separator"} ${
         className || ""
       } flex flex-row text-md justify-center w-full py-3 max-w-md `}
       formAction={action}

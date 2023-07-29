@@ -73,4 +73,15 @@ export class DayController {
       },
     });
   }
+
+  static listClosedDays() {
+    return this.prisma.day.findMany({
+      where: {
+        closed: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
 }
