@@ -81,12 +81,14 @@ export default withPageAuthRequired(function OrderPage({
         </form>
       ) : (
         <>
-          <LinkButton
-            className="bg-tertiary text-textSecondary m-auto mt-10"
-            href={ROUTES.PAGES.ORDERS.REQUEST_BY_ID(order.id)}
-            text="Fazer pedido"
-            preElement={<FiPrinter />}
-          />
+          {order.OrderProduct.length > 0 && (
+            <LinkButton
+              className="bg-tertiary text-textSecondary m-auto mt-10"
+              href={ROUTES.PAGES.ORDERS.REQUEST_BY_ID(order.id)}
+              text="Fazer pedido"
+              preElement={<FiPrinter />}
+            />
+          )}
           <LinkButton
             className="bg-warning text-textSecondary m-auto mt-5"
             href={ROUTES.PAGES.ORDERS.CLOSE_BY_ID(order.id)}

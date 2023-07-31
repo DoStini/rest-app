@@ -33,6 +33,9 @@ export class ProductsController {
               },
             },
           },
+          orderBy: {
+            name: "asc",
+          },
         },
       },
     });

@@ -139,7 +139,7 @@ const ProductList = ({
   refresh: () => Promise<any>;
 }) => {
   return (
-    <div className="grid-cols-1 divide-y divide-separator pt-2">
+    <div className="grid-cols-1 divide-y divide-separator pt-2 mb-14">
       {products?.map((product) => (
         <ProductCard
           key={`root-product-${product.id}`}

@@ -187,7 +187,9 @@ export class TableController {
             },
           },
           orderBy: {
-            createdAt: "asc",
+            product: {
+              name: "asc",
+            },
           },
         },
         creator: {
