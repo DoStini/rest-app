@@ -42,7 +42,7 @@ export default withPageAuthRequired(async function CreateOrder() {
   }
 
   return (
-    <form className="text-textPrimary flex flex-col w-full">
+    <form action={saveOrder} className="text-textPrimary flex flex-col w-full">
       <Header />
 
       <section className="my-2">
@@ -77,7 +77,6 @@ export default withPageAuthRequired(async function CreateOrder() {
         type={"submit"}
         text={"Criar Nova Conta"}
         preElement={<FiFolderPlus />}
-        action={saveOrder}
       />
     </form>
   );

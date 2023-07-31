@@ -68,14 +68,13 @@ export default withPageAuthRequired(async function CloseOrderPage({ params }) {
         orderProducts={order.finalProducts}
       ></OrderSection>
 
-      <form>
+      <form action={closeOrder}>
         <input type="hidden" name="orderId" value={order.id} />
         <Button
           className="bg-warning text-textSecondary m-auto mt-10"
           text="Confirmar e imprimir conta"
           type="submit"
           preElement={<FiPrinter />}
-          action={closeOrder}
         />
       </form>
     </div>

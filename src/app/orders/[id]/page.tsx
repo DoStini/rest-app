@@ -1,24 +1,21 @@
 "use client";
 import { openOrder, printOrder } from "@/actions/orders";
 import Button from "@/components/Button";
-import { OrderCard, ProductCard } from "@/components/Cards";
+import { ProductCard } from "@/components/Cards";
 import LinkButton from "@/components/LinkButton";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
-import { TableController } from "@/controllers/TableControllers";
 import { REFRESH_INTERVAL, jsonPost } from "@/helpers/api";
 import ROUTES from "@/helpers/constants/Routes";
 import { fetcher } from "@/helpers/fetcher";
 import { redirectLogin, redirectNotFound } from "@/helpers/router";
-import { OrderType, TableSectionType } from "@/types/TableTypes";
+import { OrderType } from "@/types/TableTypes";
 import { FetcherOrderType, SwrOrderType } from "@/types/swrTypes";
-import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0/client";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import {
   FiArrowLeft,
-  FiFolderPlus,
   FiPlusCircle,
   FiPrinter,
   FiShoppingCart,
@@ -85,7 +82,7 @@ export default withPageAuthRequired(function OrderPage({
             <LinkButton
               className="bg-tertiary text-textSecondary m-auto mt-10"
               href={ROUTES.PAGES.ORDERS.REQUEST_BY_ID(order.id)}
-              text="Fazer pedido"
+              text="Imprimir pedido"
               preElement={<FiPrinter />}
             />
           )}

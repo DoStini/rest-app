@@ -29,7 +29,7 @@ export default withPageAuthRequired(async function Create() {
   }
 
   return (
-    <form className="text-textPrimary flex flex-col w-full">
+    <form className="text-textPrimary flex flex-col w-full" action={startDay}>
       <Header />
 
       <section className="my-2">
@@ -55,7 +55,6 @@ export default withPageAuthRequired(async function Create() {
         type={"submit"}
         text={"Iniciar dia"}
         preElement={<FiFolderPlus />}
-        action={startDay}
       />
     </form>
   );

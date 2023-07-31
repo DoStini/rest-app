@@ -76,7 +76,7 @@ export default withPageAuthRequired(function OrderPage({
         <Button
           type="submit"
           className="bg-tertiary text-textSecondary m-auto mt-10"
-          text="Imprimir pedido"
+          text="Confirmar e imprimir pedido"
           preElement={<FiPrinter />}
         ></Button>
       </form>
@@ -109,9 +109,7 @@ const ProductSection = ({
       </section>
 
       <div className="grid-cols-1 divide-y divide-separator pt-2">
-        {order.OrderProduct.filter(
-          (orderProduct) => orderProduct.product.category.name != "Bebidas"
-        ).map((orderProduct) => (
+        {order.OrderProduct.map((orderProduct) => (
           <ProductCard
             key={`product${orderProduct.productId}-order${orderProduct.orderId}`}
             name={orderProduct.product.name}
