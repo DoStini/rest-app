@@ -1,4 +1,5 @@
 import Button from "@/components/Button";
+import Form from "@/components/Form";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
 import { DayController } from "@/controllers/DayController";
@@ -29,7 +30,7 @@ export default withPageAuthRequired(async function Create() {
   }
 
   return (
-    <form className="text-textPrimary flex flex-col w-full">
+    <Form className="text-textPrimary flex flex-col w-full" action={startDay}>
       <Header />
 
       <section className="my-2">
@@ -55,9 +56,8 @@ export default withPageAuthRequired(async function Create() {
         type={"submit"}
         text={"Iniciar dia"}
         preElement={<FiFolderPlus />}
-        action={startDay}
       />
-    </form>
+    </Form>
   );
 });
 

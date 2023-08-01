@@ -15,6 +15,16 @@ export class ProductsController {
     });
   }
 
+  static async createManualProduct(name: string, price: number) {
+    return this.prisma.product.create({
+      data: {
+        name,
+        price,
+        manual: true,
+      },
+    });
+  }
+
   static async listProducts() {
     return this.prisma.product.findMany();
   }
@@ -32,6 +42,9 @@ export class ProductsController {
                 amount: true,
               },
             },
+          },
+          orderBy: {
+            name: "asc",
           },
         },
       },

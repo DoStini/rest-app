@@ -1,24 +1,22 @@
 "use client";
 import { openOrder, printOrder } from "@/actions/orders";
 import Button from "@/components/Button";
-import { OrderCard, ProductCard } from "@/components/Cards";
+import { ProductCard } from "@/components/Cards";
+import Form from "@/components/Form";
 import LinkButton from "@/components/LinkButton";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
-import { TableController } from "@/controllers/TableControllers";
 import { REFRESH_INTERVAL, jsonPost } from "@/helpers/api";
 import ROUTES from "@/helpers/constants/Routes";
 import { fetcher } from "@/helpers/fetcher";
 import { redirectLogin, redirectNotFound } from "@/helpers/router";
-import { OrderType, TableSectionType } from "@/types/TableTypes";
+import { OrderType } from "@/types/TableTypes";
 import { FetcherOrderType, SwrOrderType } from "@/types/swrTypes";
-import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0/client";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import {
   FiArrowLeft,
-  FiFolderPlus,
   FiPlusCircle,
   FiPrinter,
   FiShoppingCart,
@@ -70,7 +68,7 @@ export default withPageAuthRequired(function OrderPage({
       <ProductSection order={order} refresh={refresh}></ProductSection>
 
       {order.closed ? (
-        <form action={openOrder}>
+        <Form action={openOrder}>
           <input type="hidden" name="orderId" value={order.id} />
           <Button
             type="submit"
@@ -78,15 +76,17 @@ export default withPageAuthRequired(function OrderPage({
             text="Reabrir conta"
             preElement={<FiShoppingCart />}
           ></Button>
-        </form>
+        </Form>
       ) : (
         <>
-          <LinkButton
-            className="bg-tertiary text-textSecondary m-auto mt-10"
-            href={ROUTES.PAGES.ORDERS.REQUEST_BY_ID(order.id)}
-            text="Fazer pedido"
-            preElement={<FiPrinter />}
-          />
+          {order.OrderProduct.length > 0 && (
+            <LinkButton
+              className="bg-tertiary text-textSecondary m-auto mt-10"
+              href={ROUTES.PAGES.ORDERS.REQUEST_BY_ID(order.id)}
+              text="Imprimir pedido"
+              preElement={<FiPrinter />}
+            />
+          )}
           <LinkButton
             className="bg-warning text-textSecondary m-auto mt-5"
             href={ROUTES.PAGES.ORDERS.CLOSE_BY_ID(order.id)}
@@ -148,6 +148,7 @@ const ProductSection = ({
             orderId={order.id}
             closed={order.closed}
             productId={orderProduct.productId}
+            comment={orderProduct.comment}
             refresh={refresh}
           ></ProductCard>
         ))}

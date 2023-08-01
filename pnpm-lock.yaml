@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@auth0/nextjs-auth0':
-    specifier: ^3.0.0
-    version: 3.0.0(next@13.4.12)
+    specifier: ^3.0.1
+    version: 3.0.1(next@13.4.12)
   '@prisma/client':
     specifier: 5.0.0
     version: 5.0.0(prisma@5.0.0)
@@ -38,9 +38,6 @@ dependencies:
   postcss:
     specifier: 8.4.27
     version: 8.4.27
-  preline:
-    specifier: ^1.9.0
-    version: 1.9.0
   react:
     specifier: 18.2.0
     version: 18.2.0
@@ -77,8 +74,8 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /@auth0/nextjs-auth0@3.0.0(next@13.4.12):
-    resolution: {integrity: sha512-4N3t7FenHM09ZdySetMLuvADjjinEkAzL+X+HX/bZT8pdxWsFrgMCKKkOIWBJj/mRJmw2AEOBJhW912JNnKfUw==}
+  /@auth0/nextjs-auth0@3.0.1(next@13.4.12):
+    resolution: {integrity: sha512-ng6kiYJVkOgASg9HBxoivYHEnFyErnAhqp/pXMlFty+XTZFwza0kykDDlQ/q3qDcoh6mIzZopLkQ8y00UItkrw==}
     engines: {node: '>=16'}
     peerDependencies:
       next: '>=10'
@@ -331,10 +328,6 @@ packages:
       open: 9.1.0
       picocolors: 1.0.0
       tslib: 2.6.0
-    dev: false
-
-  /@popperjs/core@2.11.8:
-    resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
     dev: false
 
   /@prisma/client@5.0.0(prisma@5.0.0):
@@ -2289,12 +2282,6 @@ packages:
       nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
-    dev: false
-
-  /preline@1.9.0:
-    resolution: {integrity: sha512-zvOexsDBood9gBAQYSwz7iY8TaomtRD0/qxvCnJl3caq5pif6frl8Oe4b4DsxHHD3Clzl4I5RmVKTq9XjMvNJA==}
-    dependencies:
-      '@popperjs/core': 2.11.8
     dev: false
 
   /prelude-ls@1.2.1:

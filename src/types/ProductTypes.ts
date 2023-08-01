@@ -21,5 +21,6 @@ export type ProductOrderType = {
   price: number;
   orderProduct: {
     amount: number;
+    comment: string | null;
   }[];
 };

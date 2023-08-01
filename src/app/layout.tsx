@@ -67,7 +67,7 @@ export default async function RootLayout({
         <head></head>
         <body className={lato.className}>
           <main className="flex min-h-screen flex-col items-center bg-white">
-            <div className="w-full min-h-screen pt-10 px-4 md:px-16">
+            <div className="w-full min-h-screen py-10 px-4 md:px-16">
               <Header />
               {children}
             </div>

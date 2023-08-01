@@ -64,10 +64,9 @@ export class Printer {
     waiter: string,
     openTime: Date,
     tableName: string,
-    amounts: { productId: number; amount: number }[]
+    amounts: { productId: number; amount: number; comment: string }[]
   ) {
     const producer = await Printer.KafkaProducer();
-
     const amountsWithProducts = await Promise.all(
       amounts.map(async (item) => {
         const product = await ProductsController.findProductById(
@@ -76,6 +75,7 @@ export class Printer {
         return {
           name: product?.name,
           amount: item.amount,
+          comment: item.comment,
         };
       })
     );

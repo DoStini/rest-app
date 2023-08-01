@@ -18,6 +18,16 @@ export const openOrder = async (data: FormData) => {
   await TableController.reopenOrder(orderId);
 };
 
+export const saveComment = async (data: FormData) => {
+  const orderId = parseInt(data.get("orderId")?.toString() || "");
+  const productId = parseInt(data.get("productId")?.toString() || "");
+  const comment = data.get("comment")?.toString() || "";
+
+  if (!orderId || !productId) return;
+
+  await TableController.saveComment(orderId, productId, comment);
+};
+
 export const requestOrder = async (data: FormData) => {
   const orderId = parseInt(data.get("orderId")?.toString() || "");
 
@@ -25,10 +35,13 @@ export const requestOrder = async (data: FormData) => {
 
   for (const key of Array.from(data.keys())) {
     if (key === "orderId") continue;
+    if (key.endsWith("-comment")) continue;
+
     const productId = parseInt(key);
     const amount = parseInt(data.get(key)?.toString() || "");
+    const comment = data.get(`${key}-comment`)?.toString() || "";
     if (!amount) continue;
-    amounts.push({ productId, amount });
+    amounts.push({ productId, amount, comment });
   }
 
   const order = await TableController.getOrder(orderId);

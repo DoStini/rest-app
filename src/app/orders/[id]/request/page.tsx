@@ -3,6 +3,7 @@ import { openOrder, printOrder, requestOrder } from "@/actions/orders";
 import Button from "@/components/Button";
 import { ProductCardType } from "@/components/Cards";
 import CounterInput from "@/components/CounterInput";
+import Form from "@/components/Form";
 import FormCounterInput from "@/components/FormCounterInput";
 import LinkButton from "@/components/LinkButton";
 import CommonHeader from "@/components/orders/CommonHeader";
@@ -58,11 +59,9 @@ export default withPageAuthRequired(function OrderPage({
 
   const order = data.data;
 
-  console.log(order);
-
   return (
     <div className="text-textPrimary h-full flex flex-col">
-      <form action={requestOrder}>
+      <Form action={requestOrder}>
         <Header order={order} />
         <section className="my-2">
           <h4 className="font-bold">Responsável</h4>
@@ -76,10 +75,10 @@ export default withPageAuthRequired(function OrderPage({
         <Button
           type="submit"
           className="bg-tertiary text-textSecondary m-auto mt-10"
-          text="Imprimir pedido"
+          text="Confirmar e imprimir pedido"
           preElement={<FiPrinter />}
         ></Button>
-      </form>
+      </Form>
     </div>
   );
 });
@@ -109,13 +108,12 @@ const ProductSection = ({
       </section>
 
       <div className="grid-cols-1 divide-y divide-separator pt-2">
-        {order.OrderProduct.filter(
-          (orderProduct) => orderProduct.product.category.name != "Bebidas"
-        ).map((orderProduct) => (
+        {order.OrderProduct.map((orderProduct) => (
           <ProductCard
             key={`product${orderProduct.productId}-order${orderProduct.orderId}`}
             name={orderProduct.product.name}
             amount={orderProduct.amount - orderProduct.orderedAmount}
+            comment={orderProduct.comment}
             orderId={order.id}
             closed={order.closed}
             productId={orderProduct.productId}
@@ -127,11 +125,12 @@ const ProductSection = ({
   );
 };
 
-function ProductCard({ name, productId, amount }: ProductCardType) {
+function ProductCard({ name, productId, amount, comment }: ProductCardType) {
   return (
     <div className="p-4 md:p-5 bg-primary">
       <div className="text-textSecondary text-sm flex flex-row justify-between items-center">
         <h3>{name}</h3>
+        <input type="hidden" name={`${productId}-comment`} value={comment || ""} />
         <FormCounterInput
           name={productId.toString()}
           defaultValue={amount}
