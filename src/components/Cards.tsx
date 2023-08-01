@@ -73,8 +73,11 @@ export function ProductCard({
               }}
               disabled={isLoading}
             ></CounterInput>
-
-            <CommentButton comment={comment} orderId={orderId} productId={productId} refresh={refresh}></CommentButton>
+            {
+                <div className={amount > 0 ? "visible" : "invisible"}>
+                <CommentButton comment={comment} orderId={orderId} productId={productId} refresh={refresh}></CommentButton>
+                </div>
+}
             </div>
         )}
       </div>
