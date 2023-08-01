@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Spinner from "./Spinner";
 
 type ButtonType = {
@@ -18,12 +18,19 @@ export default function Button({
   text,
   disabled,
 }: ButtonType) {
+  const [ref, setRef] = useState<HTMLButtonElement | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    ref?.addEventListener("submit", (e) => {
+      setLoading(true);
+    })
+  }, [ref]);
 
   return (
     <button
+      ref={(el) => setRef(el)}
       type={type}
-      onClick={() => !disabled && !loading && setLoading(true)}
       disabled={disabled || loading}
       className={`${(disabled || loading) && "!bg-separator"} ${
         className || ""

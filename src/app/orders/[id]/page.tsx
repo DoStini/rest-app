@@ -2,6 +2,7 @@
 import { openOrder, printOrder } from "@/actions/orders";
 import Button from "@/components/Button";
 import { ProductCard } from "@/components/Cards";
+import Form from "@/components/Form";
 import LinkButton from "@/components/LinkButton";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
@@ -67,7 +68,7 @@ export default withPageAuthRequired(function OrderPage({
       <ProductSection order={order} refresh={refresh}></ProductSection>
 
       {order.closed ? (
-        <form action={openOrder}>
+        <Form action={openOrder}>
           <input type="hidden" name="orderId" value={order.id} />
           <Button
             type="submit"
@@ -75,7 +76,7 @@ export default withPageAuthRequired(function OrderPage({
             text="Reabrir conta"
             preElement={<FiShoppingCart />}
           ></Button>
-        </form>
+        </Form>
       ) : (
         <>
           {order.OrderProduct.length > 0 && (

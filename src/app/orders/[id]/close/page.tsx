@@ -1,5 +1,6 @@
 import { Printer as PrinterService } from "@/app/services/Printer";
 import Button from "@/components/Button";
+import Form from "@/components/Form";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
 import { TableController } from "@/controllers/TableControllers";
@@ -68,7 +69,7 @@ export default withPageAuthRequired(async function CloseOrderPage({ params }) {
         orderProducts={order.finalProducts}
       ></OrderSection>
 
-      <form action={closeOrder}>
+      <Form action={closeOrder}>
         <input type="hidden" name="orderId" value={order.id} />
         <Button
           className="bg-warning text-textSecondary m-auto mt-10"
@@ -76,7 +77,7 @@ export default withPageAuthRequired(async function CloseOrderPage({ params }) {
           type="submit"
           preElement={<FiPrinter />}
         />
-      </form>
+      </Form>
     </div>
   );
 });

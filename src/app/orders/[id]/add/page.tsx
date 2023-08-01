@@ -1,5 +1,6 @@
 "use client";
 import { ProductCard } from "@/components/Cards";
+import LinkButton from "@/components/LinkButton";
 import CommonHeader from "@/components/orders/CommonHeader";
 import { REFRESH_INTERVAL, jsonPost } from "@/helpers/api";
 import ROUTES from "@/helpers/constants/Routes";
@@ -13,7 +14,7 @@ import { UserProfile, withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { FiArrowLeft } from "react-icons/fi";
+import { FiArrowLeft, FiTool } from "react-icons/fi";
 import useSwr, { useSWRConfig } from "swr";
 
 export default withPageAuthRequired<{ params: { id: string } }>(
@@ -97,6 +98,12 @@ export default withPageAuthRequired<{ params: { id: string } }>(
           refresh={refresh}
           orderId={order.id}
         ></ProductList>
+        <LinkButton
+          className="bg-tertiary text-textSecondary m-auto mt-10"
+          href={ROUTES.PAGES.ORDERS.CUSOTM_BY_ID(order.id)}
+          text="Produto Manual"
+          preElement={<FiTool />}
+        />
       </div>
     );
   }
@@ -139,7 +146,7 @@ const ProductList = ({
   refresh: () => Promise<any>;
 }) => {
   return (
-    <div className="grid-cols-1 divide-y divide-separator pt-2 mb-14">
+    <div className="grid-cols-1 divide-y divide-separator pt-2">
       {products?.map((product) => (
         <ProductCard
           key={`root-product-${product.id}`}

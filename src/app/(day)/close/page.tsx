@@ -1,5 +1,6 @@
 import { Printer as PrinterService } from "@/app/services/Printer";
 import Button from "@/components/Button";
+import Form from "@/components/Form";
 import CommonHeader from "@/components/orders/CommonHeader";
 import Divider from "@/components/orders/Divider";
 import { DayController } from "@/controllers/DayController";
@@ -72,14 +73,14 @@ export default withPageAuthRequired(async function CloseOrderPage({ params }) {
         products={products}
       ></OrderSection>
 
-      <form action={closeDay}>
+      <Form action={closeDay}>
         <Button
           className="bg-warning text-textSecondary m-auto my-10"
           text="Fechar dia e imprimir"
           type="submit"
           preElement={<FiAlertTriangle />}
         />
-      </form>
+      </Form>
     </div>
   );
 });

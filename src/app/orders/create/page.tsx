@@ -10,6 +10,7 @@ import { FiArrowLeft, FiFolderPlus } from "react-icons/fi";
 import Button from "@/components/Button";
 import ROUTES from "@/helpers/constants/Routes";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import Form from "@/components/Form";
 
 export default withPageAuthRequired(async function CreateOrder() {
   "use server";
@@ -42,7 +43,7 @@ export default withPageAuthRequired(async function CreateOrder() {
   }
 
   return (
-    <form action={saveOrder} className="text-textPrimary flex flex-col w-full">
+    <Form action={saveOrder} className="text-textPrimary flex flex-col w-full">
       <Header />
 
       <section className="my-2">
@@ -78,7 +79,7 @@ export default withPageAuthRequired(async function CreateOrder() {
         text={"Criar Nova Conta"}
         preElement={<FiFolderPlus />}
       />
-    </form>
+    </Form>
   );
 });
 
