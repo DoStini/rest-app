@@ -46,9 +46,10 @@ model Product {
   image        String?
   price        Decimal        @db.Decimal(12, 2)
   position     Int            @default(autoincrement())
-  category     Category       @relation(fields: [categoryId], references: [id])
+  category     Category?      @relation(fields: [categoryId], references: [id])
   orderProduct OrderProduct[]
-  categoryId   Int
+  categoryId   Int?
+  manual       Boolean        @default(false)
 }
 
 model OrderProduct {
