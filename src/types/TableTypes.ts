@@ -46,6 +46,7 @@ export type FinalOrderProductType = {
   id: number;
   name: string;
   amount: number;
+  comment: string | null;
   price: string;
   total: string;
 };

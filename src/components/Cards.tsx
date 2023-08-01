@@ -53,8 +53,6 @@ export function ProductCard({
       () => refresh().then(() => setIsLoading(false))
     );
 
-    console.log(comment);
-
   return (
     <div className="p-4 md:p-5 bg-primary">
       <div className="text-textSecondary text-sm flex flex-row justify-between items-center">

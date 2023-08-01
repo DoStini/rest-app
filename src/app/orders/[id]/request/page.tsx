@@ -59,8 +59,6 @@ export default withPageAuthRequired(function OrderPage({
 
   const order = data.data;
 
-  console.log(order);
-
   return (
     <div className="text-textPrimary h-full flex flex-col">
       <Form action={requestOrder}>
@@ -115,6 +113,7 @@ const ProductSection = ({
             key={`product${orderProduct.productId}-order${orderProduct.orderId}`}
             name={orderProduct.product.name}
             amount={orderProduct.amount - orderProduct.orderedAmount}
+            comment={orderProduct.comment}
             orderId={order.id}
             closed={order.closed}
             productId={orderProduct.productId}
@@ -126,11 +125,12 @@ const ProductSection = ({
   );
 };
 
-function ProductCard({ name, productId, amount }: ProductCardType) {
+function ProductCard({ name, productId, amount, comment }: ProductCardType) {
   return (
     <div className="p-4 md:p-5 bg-primary">
       <div className="text-textSecondary text-sm flex flex-row justify-between items-center">
         <h3>{name}</h3>
+        <input type="hidden" name={`${productId}-comment`} value={comment || ""} />
         <FormCounterInput
           name={productId.toString()}
           defaultValue={amount}
