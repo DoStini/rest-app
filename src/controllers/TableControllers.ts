@@ -89,6 +89,7 @@ export class TableController {
         ...item,
         price: item.price.toFixed(2),
         amount: amount?._sum.amount || 0,
+        comment: "",
         total: mulTwoDecimals(amount?._sum.amount || 0, item.price).toFixed(2),
       };
     });
@@ -244,6 +245,7 @@ export class TableController {
         id: item.productId,
         name: item.product.name,
         amount: item.amount,
+        comment: item.comment,
         price: item.product.price.toFixed(2),
         total: mulTwoDecimals(item.product.price, item.amount).toFixed(2),
       };
