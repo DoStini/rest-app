@@ -14,6 +14,7 @@ export default function Form({
   action,
   children,
   className,
+  onSubmit: onSubmitProp,
 }: FormType) {
   const [ref, setRef] = useState<HTMLFormElement | null>(null);
   const [button, setButton] = useState<HTMLButtonElement | null>(null);
@@ -24,8 +25,8 @@ export default function Form({
   }, [ref]);
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    console.log("submit")
     button?.dispatchEvent(new Event("submit"));
+    onSubmitProp?.(event);
   };
 
   return (

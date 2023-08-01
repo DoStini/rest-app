@@ -148,6 +148,7 @@ const ProductSection = ({
             orderId={order.id}
             closed={order.closed}
             productId={orderProduct.productId}
+            comment={orderProduct.comment}
             refresh={refresh}
           ></ProductCard>
         ))}

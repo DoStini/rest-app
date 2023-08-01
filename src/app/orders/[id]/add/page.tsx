@@ -155,6 +155,7 @@ const ProductList = ({
           amount={product.orderProduct.at(0)?.amount || 0}
           orderId={orderId}
           productId={product.id}
+          comment={product.orderProduct.at(0)?.comment || null}
           refresh={refresh}
         ></ProductCard>
       ))}

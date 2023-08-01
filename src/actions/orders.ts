@@ -18,6 +18,17 @@ export const openOrder = async (data: FormData) => {
   await TableController.reopenOrder(orderId);
 };
 
+export const saveComment = async (data: FormData) => {
+  const orderId = parseInt(data.get("orderId")?.toString() || "");
+  const productId = parseInt(data.get("productId")?.toString() || "");
+  const comment = data.get("comment")?.toString() || "";
+
+  if (!orderId || !productId) return;
+  console.log(orderId, productId, comment);
+
+  await TableController.saveComment(orderId, productId, comment);
+};
+
 export const requestOrder = async (data: FormData) => {
   const orderId = parseInt(data.get("orderId")?.toString() || "");
 

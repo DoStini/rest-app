@@ -20,8 +20,6 @@ export default function LinkButton({
 }: ButtonType) {
   const [loading, setLoading] = useState(false);
 
-  console.log("link button", loading);
-
   const clickHandler = (e: React.MouseEvent) => {
     if (!disabled && !loading) {
       setLoading(true);

@@ -3,7 +3,7 @@ import CounterInput from "./CounterInput";
 import { useState } from "react";
 import { jsonPost } from "@/helpers/api";
 import ROUTES from "@/helpers/constants/Routes";
-import { useRouter } from "next/navigation";
+import CommentButton from "./CommentButton";
 
 type LinkCardType = {
   title: string;
@@ -16,6 +16,7 @@ export type ProductCardType = {
   productId: number;
   amount: number;
   closed: boolean;
+  comment: string | null;
   refresh: () => Promise<any>;
 };
 
@@ -36,6 +37,7 @@ export function ProductCard({
   name,
   orderId,
   productId,
+  comment,
   amount,
   closed,
   refresh,
@@ -51,6 +53,8 @@ export function ProductCard({
       () => refresh().then(() => setIsLoading(false))
     );
 
+    console.log(comment);
+
   return (
     <div className="p-4 md:p-5 bg-primary">
       <div className="text-textSecondary text-sm flex flex-row justify-between items-center">
@@ -58,16 +62,20 @@ export function ProductCard({
         {closed ? (
           <p> {amount} </p>
         ) : (
-          <CounterInput
-            defaultValue={amount}
-            min={0}
-            max={Infinity}
-            onChangeSave={(amount) => {
-              setIsLoading(true);
-              onAmountChanged(orderId, productId, amount);
-            }}
-            disabled={isLoading}
-          ></CounterInput>
+          <div className="flex flex-row items-center">
+            <CounterInput
+              defaultValue={amount}
+              min={0}
+              max={Infinity}
+              onChangeSave={(amount) => {
+                setIsLoading(true);
+                onAmountChanged(orderId, productId, amount);
+              }}
+              disabled={isLoading}
+            ></CounterInput>
+
+            <CommentButton comment={comment} orderId={orderId} productId={productId} refresh={refresh}></CommentButton>
+            </div>
         )}
       </div>
     </div>

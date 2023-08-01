@@ -45,6 +45,24 @@ export class TableController {
     );
   }
 
+  static async saveComment(
+    orderId: number,
+    productId: number,
+    comment: string
+  ) {
+    return this.prisma.orderProduct.update({
+      where: {
+        productId_orderId: {
+          orderId,
+          productId,
+        },
+      },
+      data: {
+        comment,
+      },
+    });
+  }
+
   static async findOrderProducts(dayId: number) {
     const amounts = await this.prisma.orderProduct.groupBy({
       by: ["productId"],
