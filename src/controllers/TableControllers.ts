@@ -317,44 +317,47 @@ export class TableController {
   }
 
   static async closeOrder(id: number) {
-    await this.prisma.$transaction(async (tx) => {
-      const order = await this.getOrder(id, tx);
-      if (!order) throw new Error("Order not found");
-      if (order.closed) throw new Error("Order is already closed");
+    await this.prisma.$transaction(
+      async (tx) => {
+        const order = await this.getOrder(id, tx);
+        if (!order) throw new Error("Order not found");
+        if (order.closed) throw new Error("Order is already closed");
 
-      const total = this.calculateTotal(order.OrderProduct);
+        const total = this.calculateTotal(order.OrderProduct);
 
-      await tx.order.update({
-        where: { id },
-        data: {
-          closedAt: new Date(),
-          closed: true,
-          closedTotal: total,
-        },
-      });
+        await tx.order.update({
+          where: { id },
+          data: {
+            closedAt: new Date(),
+            closed: true,
+            closedTotal: total,
+          },
+        });
 
-      await DayController.incrementCurrentTotal(tx, total);
+        await DayController.incrementCurrentTotal(tx, total);
 
-      const affectedOrderProducts = await tx.orderProduct.findMany({
-        where: { order: { id } },
-        include: {
-          product: true,
-        },
-      });
+        const affectedOrderProducts = await tx.orderProduct.findMany({
+          where: { order: { id } },
+          include: {
+            product: true,
+          },
+        });
 
-      await Promise.all(
-        affectedOrderProducts.map(
-          async (item) =>
-            await tx.orderProduct.update({
-              where: {
-                productId_orderId: { orderId: id, productId: item.productId },
-              },
-              data: {
-                closedTotal: mulTwoDecimals(item.amount, item.product.price),
-              },
-            })
-        )
-      );
-    });
+        await Promise.all(
+          affectedOrderProducts.map(
+            async (item) =>
+              await tx.orderProduct.update({
+                where: {
+                  productId_orderId: { orderId: id, productId: item.productId },
+                },
+                data: {
+                  closedTotal: mulTwoDecimals(item.amount, item.product.price),
+                },
+              })
+          )
+        );
+      },
+      { timeout: 20000 }
+    );
   }
 }
