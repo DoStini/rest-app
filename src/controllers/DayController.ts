@@ -46,6 +46,7 @@ export class DayController {
       },
       data: {
         closed: true,
+        total: day.total,
       },
     });
   }
@@ -76,11 +77,40 @@ export class DayController {
   }
 
   static async currentDay(tx: PrismaTransacitonClient = this.prisma) {
-    return tx.day.findFirst({
+    const day = await tx.day.findFirst({
+      select: {
+        id: true,
+        name: true,
+        total: true,
+        closed: true,
+        closedAt: true,
+        createdAt: true,
+      },
       where: {
         closed: false,
       },
     });
+
+    if (!day) return null;
+
+    const total = (
+      await tx.order.aggregate({
+        where: {
+          closed: true,
+          day: {
+            closed: false,
+          },
+        },
+        _sum: {
+          closedTotal: true,
+        },
+      })
+    )._sum.closedTotal;
+
+    return {
+      ...day,
+      total: total || 0,
+    };
   }
 
   static listClosedDays() {

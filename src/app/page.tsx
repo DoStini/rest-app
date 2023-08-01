@@ -23,6 +23,7 @@ export default withPageAuthRequired(async function Home() {
 
   if (!day) {
     redirect(ROUTES.PAGES.DAY.CREATE);
+    return <div></div>;
   }
 
   const session = await getSession();
