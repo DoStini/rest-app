@@ -81,7 +81,7 @@ def printer_print_request(order):
     printer.text(f"Abertura: {order['openTime']}\n")
     printer.text(f"Empregado: {order['waiter']}\n")
     printer.text(f"Mesa: {order['table']}\n\n")
-    printer.text("Produtos: \n")
+    printer.text("Produtos: \n----------------\n")
     for item in order["order"]:
         item_amount = "{:>2}".format(item["amount"])
         item_name = "{:<18}".format(item["name"])
@@ -89,6 +89,9 @@ def printer_print_request(order):
         printer.text(
             f"{item_amount} x {item_name}\n")
 
+        if item.get('comment', None) is not None:
+            printer.text(f"Observações: \n{item['comment']}\n\n")
+        printer.text(f"-----------\n")
     printer.text(f"\n\n\n")
 
 
