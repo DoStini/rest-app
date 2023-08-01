@@ -37,9 +37,9 @@ export default withPageAuthRequired(async function CreateOrder() {
       userSession.name
     );
 
-    await TableController.addOrder(name, table, user.id);
+    const order = await TableController.addOrder(name, table, user.id);
 
-    redirect(ROUTES.PAGES.ORDERS.ROOT);
+    redirect(ROUTES.PAGES.ORDERS.BY_ID(order.id));
   }
 
   return (

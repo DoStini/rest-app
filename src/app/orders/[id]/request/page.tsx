@@ -3,6 +3,7 @@ import { openOrder, printOrder, requestOrder } from "@/actions/orders";
 import Button from "@/components/Button";
 import { ProductCardType } from "@/components/Cards";
 import CounterInput from "@/components/CounterInput";
+import Form from "@/components/Form";
 import FormCounterInput from "@/components/FormCounterInput";
 import LinkButton from "@/components/LinkButton";
 import CommonHeader from "@/components/orders/CommonHeader";
@@ -62,7 +63,7 @@ export default withPageAuthRequired(function OrderPage({
 
   return (
     <div className="text-textPrimary h-full flex flex-col">
-      <form action={requestOrder}>
+      <Form action={requestOrder}>
         <Header order={order} />
         <section className="my-2">
           <h4 className="font-bold">Responsável</h4>
@@ -79,7 +80,7 @@ export default withPageAuthRequired(function OrderPage({
           text="Confirmar e imprimir pedido"
           preElement={<FiPrinter />}
         ></Button>
-      </form>
+      </Form>
     </div>
   );
 });
