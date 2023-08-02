@@ -49,6 +49,9 @@ export class ProductsController {
           },
         },
       },
+      orderBy: {
+        position: "asc",
+      },
     });
   }
 }
