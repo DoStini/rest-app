@@ -23,9 +23,18 @@ export default function FormCounterInput({
   );
 
   useEffect(() => {
+    if (defaultValue < min) {
+      setValue(min);
+      return;
+    }
+    if (defaultValue > max) {
+      setValue(max);
+      return;
+    }
+
     setValue(defaultValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [window.location.pathname]);
+  }, [window.location.pathname, min, max]);
 
   const decrement = () => {
     if (value <= min) {
