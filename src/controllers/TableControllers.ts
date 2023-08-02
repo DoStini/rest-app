@@ -103,7 +103,15 @@ export class TableController {
           closed: false,
         },
       },
+      orderBy: {
+        closedAt: "desc",
+      },
       include: {
+        Table: {
+          select: {
+            name: true,
+          },
+        },
         creator: {
           select: {
             id: true,

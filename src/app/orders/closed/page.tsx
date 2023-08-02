@@ -1,6 +1,7 @@
 import CommonHeader from "@/components/orders/CommonHeader";
 import { TableController } from "@/controllers/TableControllers";
 import ROUTES from "@/helpers/constants/Routes";
+import { formatTime } from "@/helpers/time";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import Link from "next/link";
 import { FiArrowLeft, FiPlusCircle } from "react-icons/fi";
@@ -22,8 +23,9 @@ export default withPageAuthRequired(async function TablesList() {
             >
               <HistoryOrderCard
                 key={order.id}
-                title={order.name}
+                title={`${order.Table?.name} - ${order.name}`}
                 creator={order.creator.name}
+                closedAt={order.closedAt}
                 total={order.closedTotal?.toFixed(2) || "0"}
               />
             </Link>
@@ -48,10 +50,12 @@ const Header = () => {
 function HistoryOrderCard({
   title,
   creator,
+  closedAt,
   total,
 }: {
   title: string;
   creator: string;
+  closedAt: Date | null;
   total: string;
 }) {
   return (
@@ -60,7 +64,8 @@ function HistoryOrderCard({
         <div>
           <h3 className="text-lg">{title}</h3>
           <p className="text-sm">Responsável: {creator}</p>
-          <p className="text-sm">Total: {total}</p>
+          {closedAt && <p className="text-sm">Hora de fecho: {formatTime(closedAt)}</p>}
+          <p className="text-sm">Total: {total}€</p>
         </div>
       </div>
     </div>
