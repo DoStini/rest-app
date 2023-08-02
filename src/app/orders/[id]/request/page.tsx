@@ -36,7 +36,7 @@ export default withPageAuthRequired(function OrderPage({
   const { id } = params;
 
   const { data, isLoading, error }: SwrOrderType = useSWR<FetcherOrderType>(
-    ROUTES.API.ORDERS.BY_ID(id),
+    ROUTES.API.ORDERS.REQUEST_INFO_BY_ID(id),
     fetcher,
     { refreshInterval: REFRESH_INTERVAL }
   );

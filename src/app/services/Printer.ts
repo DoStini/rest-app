@@ -6,6 +6,7 @@ import {
   FinalOrderType,
   OrderType,
 } from "@/types/TableTypes";
+import { Console } from "console";
 import { Kafka } from "kafkajs";
 
 export class Printer {

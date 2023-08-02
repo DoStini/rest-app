@@ -44,11 +44,11 @@ export const requestOrder = async (data: FormData) => {
     amounts.push({ productId, amount, comment });
   }
 
-  const order = await TableController.getOrder(orderId);
+  const order = await TableController.getPrintableOrderProducts(orderId);
   if (!order) return;
 
-  const waiter = order.creator.name;
-  const openTime = order.createdAt;
+  const waiter = order.creator?.name || "";
+  const openTime = order.createdAt || new Date();
   const tableName = `${order.Table?.name}, ${order.name}`;
 
   await TableController.requestOrder(orderId, amounts);
