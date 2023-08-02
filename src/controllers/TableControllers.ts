@@ -34,6 +34,11 @@ export class TableController {
               orderId,
               productId: item.productId,
             },
+            product: {
+              category: {
+                printable: true,
+              },
+            },
           },
           data: {
             orderedAmount: {
@@ -43,6 +48,60 @@ export class TableController {
         });
       })
     );
+  }
+
+  static async getPrintableOrderProducts(id: number) {
+    const orderInfo = await this.prisma.order.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        Table: {
+          select: {
+            name: true,
+          },
+        },
+        creator: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    const filteredProducts = await this.prisma.orderProduct.findMany({
+      where: {
+        AND: {
+          order: {
+            id,
+          },
+          product: {
+            category: {
+              printable: true,
+            },
+          },
+        },
+      },
+      orderBy: {
+        product: {
+          name: "asc",
+        },
+      },
+      include: {
+        product: {
+          include: {
+            category: true,
+          },
+        },
+      },
+    });
+
+    return {
+      ...orderInfo,
+      OrderProduct: filteredProducts,
+    };
   }
 
   static async saveComment(

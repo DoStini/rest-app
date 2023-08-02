@@ -48,8 +48,8 @@ export default function CounterInput({
     <div className="flex flex-row text-textSecondary items-center">
       <div
         className={`text-2xl
-          ${disabled && "cursor-not-allowed text-separator"} 
-          ${valueChanged ? "cursor-pointer" : "invisible"} 
+          ${disabled && "cursor-not-allowed text-separator"}
+          ${valueChanged ? "cursor-pointer" : "invisible"}
           ${!disabled && "text-warning"}
         `}
         onClick={() => setValue(defaultValue)}
@@ -59,8 +59,8 @@ export default function CounterInput({
 
       <div
         className={`text-2xl pl-3
-          ${disabled && "cursor-not-allowed text-separator"} 
-          ${valueChanged ? "cursor-pointer" : "invisible"} 
+          ${disabled && "cursor-not-allowed text-separator"}
+          ${valueChanged ? "cursor-pointer" : "invisible"}
           ${value > 0 && !disabled && "text-success"}
           ${value <= 0 && !disabled && "text-warning"}
         `}
@@ -74,7 +74,7 @@ export default function CounterInput({
       </div>
 
       <div
-        className={`text-xl px-2 cursor-pointer ${
+        className={`text-2xl px-2 cursor-pointer ${
           disabled && "cursor-not-allowed text-separator"
         }`}
         onClick={decrement}
@@ -85,7 +85,7 @@ export default function CounterInput({
       <div className="text-md w-4 text-right">{value}</div>
 
       <div
-        className={`text-xl px-2 cursor-pointer ${
+        className={`text-2xl px-2 cursor-pointer ${
           disabled && "cursor-not-allowed text-separator"
         }`}
         onClick={increment}

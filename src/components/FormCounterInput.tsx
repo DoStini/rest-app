@@ -23,9 +23,18 @@ export default function FormCounterInput({
   );
 
   useEffect(() => {
+    if (defaultValue < min) {
+      setValue(min);
+      return;
+    }
+    if (defaultValue > max) {
+      setValue(max);
+      return;
+    }
+
     setValue(defaultValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [window.location.pathname]);
+  }, [window.location.pathname, min, max]);
 
   const decrement = () => {
     if (value <= min) {
@@ -44,14 +53,14 @@ export default function FormCounterInput({
 
   return (
     <div className="flex flex-row text-textSecondary items-center">
-      <div className={`text-xl px-2 cursor-pointer`} onClick={decrement}>
+      <div className={`text-2xl px-2 cursor-pointer`} onClick={decrement}>
         <FiMinusCircle></FiMinusCircle>
       </div>
 
       <div className="text-md w-4 text-right">{value}</div>
       <input value={value} hidden name={name}></input>
 
-      <div className={`text-xl px-2 cursor-pointer $`} onClick={increment}>
+      <div className={`text-2xl px-2 cursor-pointer $`} onClick={increment}>
         <FiPlusCircle></FiPlusCircle>
       </div>
     </div>

@@ -89,7 +89,7 @@ def printer_print_request(order):
         printer.text(
             f"{item_amount} x {item_name}\n")
 
-        if item.get('comment', None) is not None:
+        if item.get('comment', "") != "":
             printer.text(f"Observações: \n{item['comment']}\n\n")
         printer.text(f"-----------\n")
     printer.text(f"\n\n\n")

@@ -34,10 +34,11 @@ model Order {
 }
 
 model Category {
-  id       Int       @id @default(autoincrement())
-  name     String
-  position Int       @default(autoincrement())
-  products Product[]
+  id        Int       @id @default(autoincrement())
+  name      String
+  position  Int       @default(autoincrement())
+  products  Product[]
+  printable Boolean   @default(true)
 }
 
 model Product {

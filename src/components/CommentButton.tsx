@@ -54,7 +54,7 @@ export default function CommentButton({orderId, productId, comment, refresh}:
                   </div>
                   <div className="flex items-center justify-end p-6">
                     <button
-                      className="mx-2 bg-warning bg-textSecondary font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none"
+                      className="mx-2 bg-warning text-textSecondary font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none"
                       type="button"
                       onClick={() => setShowModal(false)}
                     >
