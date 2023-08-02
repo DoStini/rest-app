@@ -40,6 +40,7 @@ export class ProductsController {
               },
               select: {
                 amount: true,
+                comment: true,
               },
             },
           },
