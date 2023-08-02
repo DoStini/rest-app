@@ -53,14 +53,14 @@ export default function FormCounterInput({
 
   return (
     <div className="flex flex-row text-textSecondary items-center">
-      <div className={`text-xl px-2 cursor-pointer`} onClick={decrement}>
+      <div className={`text-2xl px-2 cursor-pointer`} onClick={decrement}>
         <FiMinusCircle></FiMinusCircle>
       </div>
 
       <div className="text-md w-4 text-right">{value}</div>
       <input value={value} hidden name={name}></input>
 
-      <div className={`text-xl px-2 cursor-pointer $`} onClick={increment}>
+      <div className={`text-2xl px-2 cursor-pointer $`} onClick={increment}>
         <FiPlusCircle></FiPlusCircle>
       </div>
     </div>
