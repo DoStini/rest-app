@@ -11,6 +11,9 @@ import { Kafka } from "kafkajs";
 
 export class Printer {
   static async printOrder(order: FinalOrderType) {
+    if (process.env.DISABLE_KAFKA === "true") {
+      return;
+    }
     const kafka = new Kafka({
       clientId: "server",
       brokers: [process.env.SERVER!],
@@ -43,6 +46,10 @@ export class Printer {
   }
 
   static async printDay(products: FinalOrderProductType[], day: DayType) {
+    if (process.env.DISABLE_KAKFA === "true") {
+      return;
+    }
+
     const producer = await Printer.KafkaProducer();
 
     return await producer.send({
@@ -67,6 +74,10 @@ export class Printer {
     tableName: string,
     amounts: { productId: number; amount: number; comment: string }[]
   ) {
+    if (process.env.DISABLE_KAKFA === "true") {
+      return;
+    }
+
     const producer = await Printer.KafkaProducer();
     const amountsWithProducts = await Promise.all(
       amounts.map(async (item) => {
