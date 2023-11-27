@@ -9,8 +9,8 @@ import Text from "./Text";
 const StyledPressable = styled(Pressable)`
   flex: 1;
   align-items: center;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-left: 12px;
+  padding-right: 12px;
 `;
 const TitleIconContainer = styled.View`
   flex-direction: column;
