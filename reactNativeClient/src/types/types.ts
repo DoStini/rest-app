@@ -5,6 +5,7 @@ import {
   StyleProp,
   ViewStyle,
 } from "react-native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 export type ColorType = keyof typeof theme.colors;
 export type FontSizeType = keyof typeof theme.fontSizes;
@@ -39,4 +40,26 @@ export type TabBarItemProps = {
 
 export type TabBarMarkerProps = {
   animatedStyle: StyleProp<ViewStyle>;
+};
+
+type OrderStackNavigatorParamList = {
+  Orders: undefined;
+  OrderHistory: undefined;
+};
+
+type OrdersScreenNavigationProp = StackNavigationProp<
+  OrderStackNavigatorParamList,
+  "Orders"
+>;
+type OrderHistoryScreenNavigationProp = StackNavigationProp<
+  OrderStackNavigatorParamList,
+  "OrderHistory"
+>;
+
+export type OrdersProps = {
+  navigation: OrdersScreenNavigationProp;
+};
+
+export type OrderHistoryProps = {
+  navigation: OrderHistoryScreenNavigationProp;
 };
