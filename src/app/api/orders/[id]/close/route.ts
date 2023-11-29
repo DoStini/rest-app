@@ -1,3 +1,4 @@
+import { Printer as PrinterService } from "@/app/services/Printer";
 import { TableController } from "@/controllers/TableControllers";
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { NextApiRequest } from "next";
@@ -12,7 +13,9 @@ const POST = withApiAuthRequired(async (request: NextRequest, { params }) => {
   }
 
   try {
+    const order = await TableController.generateOrder(orderId);
     await TableController.closeOrder(orderId);
+    await PrinterService.printOrder(order);
     return NextResponse.json({});
   } catch (err) {
     console.error(err);
