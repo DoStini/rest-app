@@ -15,5 +15,3 @@ services:
       PGADMIN_DEFAULT_PASSWORD: pg!password
     ports:
       - "4321:80"
-    depends_on:
-      - postgres
