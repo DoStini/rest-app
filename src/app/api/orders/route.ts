@@ -37,6 +37,7 @@ const POST = withApiAuthRequired(async (request: NextRequest) => {
     const order = await TableController.addOrder(orderName, tableId, user.id);
     return NextResponse.json(order);
   } catch (err) {
+    console.error(err);
     if (!(err instanceof Error)) {
       return NextResponse.json({ error: "Unknown error" }, { status: 500 });
     }

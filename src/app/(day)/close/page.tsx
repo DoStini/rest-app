@@ -10,7 +10,6 @@ import { formatDateWithTime, formatTime } from "@/helpers/time";
 import { DayType } from "@/types/DayTypes";
 import { FinalOrderProductType, SimpleOrderType } from "@/types/TableTypes";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { UserProfile } from "@auth0/nextjs-auth0/client";
 import { revalidatePath } from "next/cache";
 
 import Link from "next/link";
