@@ -34,3 +34,9 @@ npx prisma db seed
 ```bash
 npm run dev
 ```
+
+# Testing the API
+
+Login in the browser and find the Cookie header in the requests sent
+
+Change the Cookie header in request "Get orders / Start auth"

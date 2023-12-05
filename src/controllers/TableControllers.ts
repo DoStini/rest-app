@@ -220,7 +220,14 @@ export class TableController {
   static async addOrder(name: string, tableId: number, userId: number) {
     return this.prisma.$transaction(async (tx) => {
       const day = await DayController.currentDay(tx);
+      const table = await tx.table.findUnique({
+        where: { id: tableId },
+      });
+
+      if (!table) throw new Error("Table not found");
+
       if (!day) throw new Error("No day open");
+
       return await tx.order.create({
         data: {
           name,
