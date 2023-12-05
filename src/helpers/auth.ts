@@ -1,9 +1,5 @@
 import { AuthUser } from "@/types/User";
-import {
-  AppRouteHandlerFn,
-  AppRouteHandlerFnContext,
-  getSession,
-} from "@auth0/nextjs-auth0";
+import { AppRouteHandlerFnContext, getSession } from "@auth0/nextjs-auth0";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import jwt, { JwtPayload } from "jsonwebtoken";
@@ -15,7 +11,7 @@ export type ApiRouteWithAuthHandlerFn = (
   user: AuthUser
 ) => Promise<Response> | Response;
 
-export const apiWithAuth =
+export const withApiAuth =
   (handler: ApiRouteWithAuthHandlerFn) =>
   async (request: NextRequest, ctx: AppRouteHandlerFnContext) => {
     const data = await getSession();

@@ -1,10 +1,9 @@
 import { Printer as PrinterService } from "@/app/services/Printer";
 import { TableController } from "@/controllers/TableControllers";
-import { withApiAuthRequired } from "@auth0/nextjs-auth0";
-import { NextApiRequest } from "next";
+import { withApiAuth } from "@/helpers/auth";
 import { NextRequest, NextResponse } from "next/server";
 
-const POST = withApiAuthRequired(async (request: NextRequest, { params }) => {
+const POST = withApiAuth(async (request: NextRequest, { params }) => {
   const orderIdRaw = params?.id as string;
   const orderId = parseInt(orderIdRaw || "");
 

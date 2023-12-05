@@ -1,8 +1,8 @@
 import { TableController } from "@/controllers/TableControllers";
-import { withApiAuthRequired } from "@auth0/nextjs-auth0";
+import { withApiAuth } from "@/helpers/auth";
 import { NextResponse } from "next/server";
 
-const POST = withApiAuthRequired(async (request, { params }) => {
+const POST = withApiAuth(async (request, { params }) => {
   const orderIdRaw = params?.id as string;
   const productIdRaw = params?.product as string;
 

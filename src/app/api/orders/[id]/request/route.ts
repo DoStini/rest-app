@@ -1,11 +1,11 @@
 import { TableController } from "@/controllers/TableControllers";
-import { withApiAuthRequired } from "@auth0/nextjs-auth0";
-import { NextRequest, NextResponse } from "next/server";
+import { withApiAuth } from "@/helpers/auth";
+import { NextResponse } from "next/server";
 
 /**
  * @description This API route is used to get the printable order products from the print page
  */
-const GET = withApiAuthRequired(async (_, { params }) => {
+const GET = withApiAuth(async (_, { params }) => {
   const idRaw = params?.id as string;
 
   if (!idRaw) {
