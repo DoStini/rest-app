@@ -1,10 +1,10 @@
 import { TableController } from "@/controllers/TableControllers";
 import { UserController } from "@/controllers/UserController";
 import { setDynamicRoute } from "@/helpers/api";
-import { getSession, withApiAuthRequired } from "@auth0/nextjs-auth0";
+import { withApiAuth } from "@/helpers/auth";
 import { NextRequest, NextResponse } from "next/server";
 
-const GET = withApiAuthRequired(async (request: Request) => {
+const GET = withApiAuth(async (request: Request) => {
   setDynamicRoute(request);
 
   const activeTables = await TableController.findActiveTables();
@@ -16,25 +16,23 @@ type CreateOrderType = {
   orderName: string | null;
 };
 
-const POST = withApiAuthRequired(async (request: NextRequest) => {
+const POST = withApiAuth(async (request: NextRequest, _ctx, user) => {
   const { tableId, orderName } = (await request.json()) as CreateOrderType;
   if (!tableId || !orderName) {
     return NextResponse.json({}, { status: 404 });
   }
 
-  const userSession = await getSession();
-
-  if (!userSession) {
-    return NextResponse.json({}, { status: 401 });
-  }
-
-  const user = await UserController.findOrCreateUser(
-    userSession.user.nickname,
-    userSession.user.name
+  const retrievedUser = await UserController.findOrCreateUser(
+    user.email,
+    user.name
   );
 
   try {
-    const order = await TableController.addOrder(orderName, tableId, user.id);
+    const order = await TableController.addOrder(
+      orderName,
+      tableId,
+      retrievedUser.id
+    );
     return NextResponse.json(order);
   } catch (err) {
     console.error(err);
