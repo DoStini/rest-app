@@ -29,6 +29,17 @@ export class ProductsController {
     return this.prisma.product.findMany();
   }
 
+  static async listProductByCategory() {
+    return this.prisma.category.findMany({
+      include: {
+        products: true,
+      },
+      orderBy: {
+        position: "asc",
+      },
+    });
+  }
+
   static async listProductByCategoryWithOrder(orderId: number) {
     return this.prisma.category.findMany({
       include: {
