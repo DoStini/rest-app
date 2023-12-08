@@ -16,6 +16,7 @@ export class UserController {
       },
       update: {
         username,
+        name,
       },
       create: {
         username,
