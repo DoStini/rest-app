@@ -18,6 +18,15 @@ export class TableController {
     }
   }
 
+  static getTablesInfo() {
+    return this.prisma.table.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+  }
+
   static async listAllTables() {
     return this.prisma.table.findMany();
   }
