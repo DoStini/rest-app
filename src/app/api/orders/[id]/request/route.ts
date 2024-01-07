@@ -1,3 +1,4 @@
+import { Printer } from "@/app/services/Printer";
 import { TableController } from "@/controllers/TableControllers";
 import { withApiAuth } from "@/helpers/auth";
 import { NextResponse } from "next/server";
@@ -26,4 +27,38 @@ const GET = withApiAuth(async (_, { params }) => {
   return NextResponse.json(order);
 });
 
-export { GET };
+const POST = withApiAuth(async (req, { params }) => {
+  const idRaw = params?.id as string;
+
+  if (!idRaw) {
+    return NextResponse.json({}, { status: 404 });
+  }
+
+  const id = parseInt(idRaw);
+  if (isNaN(id)) {
+    return NextResponse.json({}, { status: 404 });
+  }
+
+  const order = await TableController.getPrintableOrderProducts(id);
+
+  if (!order) {
+    return NextResponse.json({}, { status: 404 });
+  }
+
+  const amounts = (await req.json()) as {
+    productId: number;
+    amount: number;
+  }[];
+
+  if (!amounts) {
+    return NextResponse.json({}, { status: 404 });
+  }
+
+  await TableController.requestOrder(id, amounts);
+
+  //TODO: Fix amounts await Printer.printRequest(waiter, openTime, tableName, amounts);
+
+  return NextResponse.json({});
+});
+
+export { GET, POST };
