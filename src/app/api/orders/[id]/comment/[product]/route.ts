@@ -16,11 +16,11 @@ const POST = withApiAuth(async (request, { params }) => {
     return NextResponse.json({}, { status: 404 });
   }
 
-  const { amount } = await request.json();
+  const { comment } = await request.json();
 
-  const updated = await TableController.updateOrder(orderId, productId, amount);
+  await TableController.saveComment(orderId, productId, comment);
 
-  return NextResponse.json(updated);
+  return NextResponse.json({});
 });
 
 export { POST };
