@@ -248,6 +248,25 @@ export class TableController {
     });
   }
 
+  static editOrder(id: number, name: string, tableId: number) {
+    return this.prisma.$transaction(async (tx) => {
+      const order = await this.getOrder(id, tx);
+      if (!order) throw new Error("Order not found");
+      const table = await tx.table.findUnique({
+        where: { id: tableId },
+      });
+      if (!table) throw new Error("Table not found");
+
+      return await tx.order.update({
+        where: { id },
+        data: {
+          name,
+          tableId,
+        },
+      });
+    });
+  }
+
   static getSimpleOrder(id: number) {
     return this.prisma.order.findUnique({
       where: { id },
