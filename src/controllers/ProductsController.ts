@@ -12,7 +12,7 @@ export class ProductsController {
 
   static async findProductById(id: number) {
     return this.prisma.product.findUnique({
-      where: { id },
+      where: { id, deleted: false },
     });
   }
 
@@ -32,23 +32,56 @@ export class ProductsController {
     });
   }
 
+  static deleteProduct(productId: number) {
+    return this.prisma.$transaction(async (tx) => {
+      await tx.orderProduct.deleteMany({
+        where: {
+          productId,
+          order: {
+            closed: false,
+          },
+        },
+      });
+      await tx.product.update({
+        where: {
+          id: productId,
+        },
+        data: {
+          deleted: true,
+        },
+      });
+    });
+  }
+
   static updateProduct(productId: number, productInfo: CreateProductType) {
     return this.prisma.product.update({
       where: {
         id: productId,
+        deleted: false,
       },
       data: productInfo,
     });
   }
 
   static async listProducts() {
-    return this.prisma.product.findMany();
+    return this.prisma.product.findMany({
+      where: {
+        deleted: false,
+      },
+    });
   }
 
   static async listProductByCategory() {
     return this.prisma.category.findMany({
       include: {
         products: true,
+      },
+      where: {
+        products: {
+          some: {
+            deleted: false,
+          },
+        },
       },
       orderBy: {
         position: "asc",

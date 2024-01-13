@@ -51,6 +51,7 @@ model Product {
   orderProduct OrderProduct[]
   categoryId   Int?
   manual       Boolean        @default(false)
+  deleted      Boolean        @default(false)
 }
 
 model OrderProduct {

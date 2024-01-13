@@ -25,4 +25,21 @@ const PATCH = withApiAuth(async (req: NextRequest, { params }) => {
   return NextResponse.json(updated);
 });
 
-export { PATCH };
+const DELETE = withApiAuth(async (req: NextRequest, { params }) => {
+  const id = params?.id as string;
+
+  if (!id) {
+    return NextResponse.json({}, { status: 404 });
+  }
+
+  const productId = parseInt(id);
+  if (isNaN(productId)) {
+    return NextResponse.json({}, { status: 404 });
+  }
+
+  await ProductsController.deleteProduct(productId);
+
+  return NextResponse.json({});
+});
+
+export { PATCH, DELETE };
