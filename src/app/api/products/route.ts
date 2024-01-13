@@ -1,5 +1,6 @@
 import { ProductsController } from "@/controllers/ProductsController";
 import { withApiAuth } from "@/helpers/auth";
+import { CreateProductType } from "@/types/ProductTypes";
 import { NextRequest, NextResponse } from "next/server";
 
 const GET = withApiAuth(async (req: NextRequest) => {
@@ -8,4 +9,12 @@ const GET = withApiAuth(async (req: NextRequest) => {
   return NextResponse.json(products);
 });
 
-export { GET };
+const POST = withApiAuth(async (req: NextRequest) => {
+  const productInfo = (await req.json()) as CreateProductType;
+
+  const product = await ProductsController.createProduct(productInfo);
+
+  return NextResponse.json(product);
+});
+
+export { GET, POST };
