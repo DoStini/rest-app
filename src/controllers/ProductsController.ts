@@ -1,3 +1,4 @@
+import { CreateProductType } from "@/types/ProductTypes";
 import { PrismaClient } from "@prisma/client";
 
 export class ProductsController {
@@ -22,6 +23,21 @@ export class ProductsController {
         price,
         manual: true,
       },
+    });
+  }
+
+  static createProduct(productInfo: CreateProductType) {
+    return this.prisma.product.create({
+      data: productInfo,
+    });
+  }
+
+  static updateProduct(productId: number, productInfo: CreateProductType) {
+    return this.prisma.product.update({
+      where: {
+        id: productId,
+      },
+      data: productInfo,
     });
   }
 
