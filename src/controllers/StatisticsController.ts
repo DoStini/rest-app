@@ -73,6 +73,47 @@ export class StatisticsController {
     };
   };
 
+  static getBiggestOrder = async (
+    tx: PrismaTransacitonClient = this.prisma
+  ): Promise<Statistic | null> => {
+    const biggestOrderValue = await tx.order.aggregate({
+      where: {
+        closed: true,
+      },
+      _max: {
+        closedTotal: true,
+      },
+    });
+
+    if (!biggestOrderValue._max.closedTotal) {
+      return null;
+    }
+
+    const biggestOrder = await tx.order.findFirst({
+      where: {
+        closedTotal: biggestOrderValue._max.closedTotal,
+      },
+      include: {
+        creator: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!biggestOrder) {
+      return null;
+    }
+
+    return {
+      name: "Biggest Order",
+      value: biggestOrderValue._max.closedTotal.toFixed(2).toString(),
+      subValue: biggestOrder.creator.name,
+      preValue: "€",
+    };
+  };
+
   static bestDayOfWeek = async (
     tx: PrismaTransacitonClient = this.prisma
   ): Promise<Statistic | null> => {
@@ -155,6 +196,7 @@ export class StatisticsController {
           this.getTotalDay(tx),
           this.bestDayOfWeek(tx),
           this.getBestEmployee(tx),
+          this.getBiggestOrder(tx),
           this.mostSoldProduct(tx),
         ]);
 
