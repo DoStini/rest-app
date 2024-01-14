@@ -153,8 +153,8 @@ export class StatisticsController {
       async (tx) => {
         const statistics = await Promise.all([
           this.getTotalDay(tx),
-          this.getBestEmployee(tx),
           this.bestDayOfWeek(tx),
+          this.getBestEmployee(tx),
           this.mostSoldProduct(tx),
         ]);
 
