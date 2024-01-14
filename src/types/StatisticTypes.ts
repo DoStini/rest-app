@@ -6,3 +6,15 @@ export type Statistic = {
 };
 
 export type MainStatistics = Statistic[];
+
+export type ProductStatistics = {
+  total: number;
+  products: {
+    name: string;
+    amount: number;
+  }[];
+  categories: {
+    name: string;
+    amount: number;
+  }[];
+};

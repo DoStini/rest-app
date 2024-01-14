@@ -1,6 +1,10 @@
 import { formatDateWithMonth } from "@/helpers/time";
 import { PrismaTransacitonClient } from "@/types/PrismaTypes";
-import { MainStatistics, Statistic } from "@/types/StatisticTypes";
+import {
+  MainStatistics,
+  ProductStatistics,
+  Statistic,
+} from "@/types/StatisticTypes";
 import { PrismaClient } from "@prisma/client";
 
 export class StatisticsController {
@@ -36,7 +40,7 @@ export class StatisticsController {
     };
   };
 
-  static getBestEmployee = async (
+  private static getBestEmployee = async (
     tx: PrismaTransacitonClient = this.prisma
   ): Promise<Statistic | null> => {
     const bestEmployee = await tx.order.groupBy({
@@ -73,7 +77,7 @@ export class StatisticsController {
     };
   };
 
-  static getBiggestOrder = async (
+  private static getBiggestOrder = async (
     tx: PrismaTransacitonClient = this.prisma
   ): Promise<Statistic | null> => {
     const biggestOrderValue = await tx.order.aggregate({
@@ -114,7 +118,7 @@ export class StatisticsController {
     };
   };
 
-  static bestDayOfWeek = async (
+  private static bestDayOfWeek = async (
     tx: PrismaTransacitonClient = this.prisma
   ): Promise<Statistic | null> => {
     const bestDay = await tx.order.groupBy({
@@ -151,7 +155,7 @@ export class StatisticsController {
     };
   };
 
-  static mostSoldProduct = async (
+  private static mostSoldProduct = async (
     tx: PrismaTransacitonClient = this.prisma
   ): Promise<Statistic | null> => {
     const mostSoldProduct = await tx.orderProduct.groupBy({
@@ -203,6 +207,95 @@ export class StatisticsController {
         return statistics.filter(
           (statistic) => statistic !== null
         ) as MainStatistics;
+      }
+    );
+
+    return statistics;
+  };
+
+  static getProductStatistics = async () => {
+    const statistics: ProductStatistics | null = await this.prisma.$transaction(
+      async (tx) => {
+        const products = await tx.orderProduct.groupBy({
+          by: ["productId"],
+          where: {
+            closedTotal: {
+              not: null,
+            },
+          },
+          _sum: {
+            amount: true,
+          },
+          orderBy: {
+            _sum: {
+              amount: "desc",
+            },
+          },
+          take: 5,
+        });
+
+        const total = await tx.orderProduct.aggregate({
+          where: {
+            closedTotal: {
+              not: null,
+            },
+          },
+          _sum: {
+            amount: true,
+          },
+        });
+
+        if (!total._sum.amount) {
+          return null;
+        }
+
+        const mappedProducts = await Promise.all(
+          products.map(async (product) => {
+            const productData = await tx.product.findUnique({
+              where: {
+                id: product.productId,
+              },
+            });
+
+            return {
+              name: productData!.name,
+              amount: product._sum.amount!,
+            };
+          })
+        );
+
+        const categories: {
+          categoryId: number;
+          name: string;
+          totalAmount: bigint;
+        }[] = await tx.$queryRaw`
+            SELECT
+            p."categoryId",
+            c."name" as "name",
+            SUM(op."amount") AS "totalAmount"
+            FROM
+            "OrderProduct" op
+            JOIN "Product" p ON op."productId" = p."id"
+            JOIN "Category" c ON p."categoryId" = c."id"
+            WHERE
+            op."closedTotal" IS NOT NULL
+            GROUP BY
+            p."categoryId", c."name"
+            ORDER BY
+            "totalAmount" DESC
+            LIMIT 5
+        `;
+
+        const mappedCategories = categories.map((category) => ({
+          name: category.name,
+          amount: Number(category.totalAmount),
+        }));
+
+        return {
+          total: total._sum.amount,
+          products: mappedProducts,
+          categories: mappedCategories,
+        };
       }
     );
 
