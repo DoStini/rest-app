@@ -265,29 +265,29 @@ export class StatisticsController {
         );
 
         const categories: {
-          categoryId: number;
+          categoryId: number | null; // Allow null for products without a category
           name: string;
           totalAmount: bigint;
         }[] = await tx.$queryRaw`
             SELECT
-            p."categoryId",
-            c."name" as "name",
-            SUM(op."amount") AS "totalAmount"
+              p."categoryId",
+              c."name" as "name",
+              SUM(op."amount") AS "totalAmount"
             FROM
-            "OrderProduct" op
-            JOIN "Product" p ON op."productId" = p."id"
-            JOIN "Category" c ON p."categoryId" = c."id"
+              "OrderProduct" op
+              JOIN "Product" p ON op."productId" = p."id"
+              LEFT JOIN "Category" c ON p."categoryId" = c."id"
             WHERE
-            op."closedTotal" IS NOT NULL
+              op."closedTotal" IS NOT NULL
             GROUP BY
-            p."categoryId", c."name"
+              p."categoryId", c."name"
             ORDER BY
-            "totalAmount" DESC
+              "totalAmount" DESC
             LIMIT 5
-        `;
+          `;
 
         const mappedCategories = categories.map((category) => ({
-          name: category.name,
+          name: category.name || "Manual", // Use "Manual" if category name is null or undefined
           amount: Number(category.totalAmount),
         }));
 
