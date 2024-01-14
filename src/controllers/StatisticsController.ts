@@ -72,12 +72,89 @@ export class StatisticsController {
     };
   };
 
+  static bestDayOfWeek = async (
+    tx: PrismaTransacitonClient = this.prisma
+  ): Promise<Statistic | null> => {
+    const bestDay = await tx.order.groupBy({
+      by: ["dayId"],
+      where: {
+        closed: true,
+      },
+      _sum: {
+        closedTotal: true,
+      },
+      orderBy: {
+        _sum: {
+          closedTotal: "desc",
+        },
+      },
+      take: 1,
+    });
+
+    const day = await tx.day.findUnique({
+      where: {
+        id: bestDay[0].dayId,
+      },
+    });
+
+    if (!bestDay[0]._sum.closedTotal) {
+      return null;
+    }
+
+    return {
+      name: "Best day of the Week",
+      value: bestDay[0]._sum.closedTotal?.toString(),
+      subValue: `${day?.createdAt.getDate()}/${day?.createdAt.getMonth()}`,
+      preValue: "€",
+    };
+  };
+
+  static mostSoldProduct = async (
+    tx: PrismaTransacitonClient = this.prisma
+  ): Promise<Statistic | null> => {
+    const mostSoldProduct = await tx.orderProduct.groupBy({
+      by: ["productId"],
+      where: {
+        order: {
+          closed: true,
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+      orderBy: {
+        _sum: {
+          amount: "desc",
+        },
+      },
+      take: 1,
+    });
+
+    const product = await tx.product.findUnique({
+      where: {
+        id: mostSoldProduct[0].productId,
+      },
+    });
+
+    if (!product || !mostSoldProduct[0]._sum.amount) {
+      return null;
+    }
+
+    return {
+      name: "Most Sold Product",
+      value: mostSoldProduct[0]._sum.amount?.toString(),
+      subValue: product?.name,
+    };
+  };
+
   static getMainStatistics = async () => {
     const statistics: MainStatistics = await this.prisma.$transaction(
       async (tx) => {
         const statistics = await Promise.all([
           this.getTotalDay(tx),
           this.getBestEmployee(tx),
+          this.bestDayOfWeek(tx),
+          this.mostSoldProduct(tx),
         ]);
 
         return statistics.filter(

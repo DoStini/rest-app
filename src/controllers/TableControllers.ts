@@ -436,8 +436,6 @@ export class TableController {
           },
         });
 
-        await DayController.incrementCurrentTotal(tx, total);
-
         const affectedOrderProducts = await tx.orderProduct.findMany({
           where: { order: { id } },
           include: {
