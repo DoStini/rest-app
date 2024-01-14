@@ -1,3 +1,4 @@
+import { formatDateWithMonth } from "@/helpers/time";
 import { PrismaTransacitonClient } from "@/types/PrismaTypes";
 import { MainStatistics, Statistic } from "@/types/StatisticTypes";
 import { PrismaClient } from "@prisma/client";
@@ -30,7 +31,7 @@ export class StatisticsController {
 
     return {
       name: "Total Day",
-      value: total?.toString() || "0",
+      value: total?.toFixed(2).toString() || "0",
       preValue: "€",
     };
   };
@@ -66,7 +67,7 @@ export class StatisticsController {
 
     return {
       name: "Best Employee",
-      value: bestEmployee[0]._sum.closedTotal?.toString(),
+      value: bestEmployee[0]._sum.closedTotal?.toFixed(2).toString(),
       subValue: user?.name,
       preValue: "€",
     };
@@ -103,8 +104,8 @@ export class StatisticsController {
 
     return {
       name: "Best day of the Week",
-      value: bestDay[0]._sum.closedTotal?.toString(),
-      subValue: `${day?.createdAt.getDate()}/${day?.createdAt.getMonth()}`,
+      value: bestDay[0]._sum.closedTotal?.toFixed(2).toString(),
+      subValue: `${formatDateWithMonth(day?.createdAt, "/")} - ${day?.name}`,
       preValue: "€",
     };
   };
