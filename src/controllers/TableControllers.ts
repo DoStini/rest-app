@@ -403,11 +403,7 @@ export class TableController {
       if (!order) throw new Error("Order not found");
       if (!order.closed) throw new Error("Order is not closed");
 
-      const total = order.closedTotal || 0;
-
-      await DayController.decrementCurrentTotal(tx, total);
-
-      await tx.order.update({
+      return await tx.order.update({
         where: { id: orderId },
         data: {
           closed: false,
