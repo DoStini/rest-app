@@ -1,6 +1,7 @@
 import { formatDateWithMonth } from "@/helpers/time";
 import { PrismaTransacitonClient } from "@/types/PrismaTypes";
 import {
+  EmployeeStatistics,
   MainStatistics,
   ProductStatistics,
   Statistic,
@@ -287,7 +288,7 @@ export class StatisticsController {
           `;
 
         const mappedCategories = categories.map((category) => ({
-          name: category.name || "Manual", // Use "Manual" if category name is null or undefined
+          name: category.name || "Manual",
           amount: Number(category.totalAmount),
         }));
 
@@ -299,6 +300,126 @@ export class StatisticsController {
       }
     );
 
+    return statistics;
+  };
+
+  private static getBiggestOrders = async (
+    tx: PrismaTransacitonClient = this.prisma
+  ): Promise<EmployeeStatistics["biggest"]> => {
+    const biggestOrders = await tx.order.groupBy({
+      by: ["userId"],
+      where: {
+        closed: true,
+      },
+      _max: {
+        closedTotal: true,
+      },
+      orderBy: {
+        _max: {
+          closedTotal: "desc",
+        },
+      },
+      take: 5,
+    });
+    const mapped = await Promise.all(
+      biggestOrders.map(async (data) => ({
+        name: (await tx.user.findUnique({
+          where: {
+            id: data.userId,
+          },
+        }))!.name,
+        value: Number(data._max.closedTotal || 0),
+      }))
+    );
+
+    return mapped;
+  };
+
+  private static getMostValuableEmployees = async (
+    tx: PrismaTransacitonClient = this.prisma
+  ): Promise<EmployeeStatistics["monetary"]> => {
+    const bestEmployees = await tx.order.groupBy({
+      by: ["userId"],
+      where: {
+        closed: true,
+      },
+      _sum: {
+        closedTotal: true,
+      },
+      orderBy: {
+        _sum: {
+          closedTotal: "desc",
+        },
+      },
+      take: 5,
+    });
+
+    const mappedEmployees = await Promise.all(
+      bestEmployees.map(async (data) => ({
+        name:
+          (
+            await tx.user.findUnique({
+              where: {
+                id: data.userId,
+              },
+            })
+          )?.name || "",
+        value: Number(data._sum.closedTotal),
+      }))
+    );
+
+    return mappedEmployees;
+  };
+
+  private static getMostOrdersEmployee = async (
+    tx: PrismaTransacitonClient = this.prisma
+  ): Promise<EmployeeStatistics["quantity"]> => {
+    const bestEmployees = await tx.order.groupBy({
+      by: ["userId"],
+      where: {
+        closed: true,
+      },
+      _count: {
+        closedTotal: true,
+      },
+      orderBy: {
+        _count: {
+          closedTotal: "desc",
+        },
+      },
+      take: 5,
+    });
+
+    const mappedEmployees = await Promise.all(
+      bestEmployees.map(async (data) => ({
+        name: (await tx.user.findUnique({
+          where: {
+            id: data.userId,
+          },
+        }))!.name,
+        value: data._count.closedTotal,
+      }))
+    );
+
+    return mappedEmployees;
+  };
+
+  static getEmployeeStatistics = async () => {
+    const statistics: EmployeeStatistics = await this.prisma.$transaction(
+      async (tx) => {
+        const [mostOrders, mostValuable, biggestOrders] = await Promise.all([
+          this.getMostOrdersEmployee(tx),
+          this.getMostValuableEmployees(tx),
+          this.getBiggestOrders(tx),
+        ]);
+
+        return {
+          monetary: mostValuable,
+          quantity: mostOrders,
+          biggest: biggestOrders,
+        };
+      }
+    );
     return statistics;
   };
 }

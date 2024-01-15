@@ -18,3 +18,18 @@ export type ProductStatistics = {
     amount: number;
   }[];
 };
+
+export type EmployeeStatistics = {
+  monetary: {
+    name: string;
+    value: number;
+  }[];
+  biggest: {
+    name: string;
+    value: number;
+  }[];
+  quantity: {
+    name: string;
+    value: number;
+  }[];
+};
