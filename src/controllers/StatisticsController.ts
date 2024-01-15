@@ -2,6 +2,7 @@ import { formatDateWithMonth } from "@/helpers/time";
 import { PrismaTransacitonClient } from "@/types/PrismaTypes";
 import {
   EmployeeStatistics,
+  LastDaysStatistics,
   MainStatistics,
   ProductStatistics,
   Statistic,
@@ -420,6 +421,26 @@ export class StatisticsController {
         };
       }
     );
+    return statistics;
+  };
+
+  static getLastDaysStatistics = async () => {
+    const lastDays = await this.prisma.day.findMany({
+      where: {
+        closed: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 7,
+    });
+
+    const statistics: LastDaysStatistics = lastDays.map((day) => ({
+      name: day.name,
+      day: formatDateWithMonth(day.createdAt, "/"),
+      value: Number(day.total),
+    }));
+
     return statistics;
   };
 }

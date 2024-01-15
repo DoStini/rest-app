@@ -33,3 +33,9 @@ export type EmployeeStatistics = {
     value: number;
   }[];
 };
+
+export type LastDaysStatistics = {
+  name: string;
+  day: string;
+  value: number;
+}[];
