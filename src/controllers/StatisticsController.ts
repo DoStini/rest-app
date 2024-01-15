@@ -430,7 +430,7 @@ export class StatisticsController {
         closed: true,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: "asc",
       },
       take: 7,
     });
