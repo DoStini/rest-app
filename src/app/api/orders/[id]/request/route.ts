@@ -54,9 +54,20 @@ const POST = withApiAuth(async (req, { params }) => {
     return NextResponse.json({}, { status: 404 });
   }
 
-  await TableController.requestOrder(id, amounts);
+  const data = (await TableController.requestOrder(id, amounts)).map(
+    (item) => ({
+      productId: item.productId,
+      amount: item.amount,
+      comment: item.comment || "",
+    })
+  );
 
-  //TODO: Fix amounts await Printer.printRequest(waiter, openTime, tableName, amounts);
+  await Printer.printRequest(
+    order.creator?.name || "",
+    order.createdAt || new Date(),
+    order.Table?.name || "",
+    data
+  );
 
   return NextResponse.json({});
 });

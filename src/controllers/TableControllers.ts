@@ -37,7 +37,12 @@ export class TableController {
   ) {
     return await Promise.all(
       amounts.map(async (item) => {
-        await this.prisma.orderProduct.update({
+        return await this.prisma.orderProduct.update({
+          select: {
+            amount: true,
+            productId: true,
+            comment: true,
+          },
           where: {
             productId_orderId: {
               orderId,
