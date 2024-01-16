@@ -10,9 +10,6 @@ import { Kafka } from "kafkajs";
 
 export class Printer {
   static async printOrder(order: FinalOrderType) {
-    // if (process.env.DISABLE_KAFKA === "true") {
-    //   return;
-    // }
     const producer = await Printer.KafkaProducer();
     console.log("producer", producer);
     return await producer.send({

@@ -14,10 +14,10 @@ class PrinterMock:
         pass
 
     def text(self, text):
-        print(text)
+        print(text, end="", flush=True)
 
     def cut(self):
-        print("------razor------")
+        print("------razor------\n")
 
 
 def startup():
