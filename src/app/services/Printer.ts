@@ -6,28 +6,15 @@ import {
   FinalOrderType,
   OrderType,
 } from "@/types/TableTypes";
-import { Console } from "console";
 import { Kafka } from "kafkajs";
 
 export class Printer {
   static async printOrder(order: FinalOrderType) {
-    if (process.env.DISABLE_KAFKA === "true") {
-      return;
-    }
-    const kafka = new Kafka({
-      clientId: "server",
-      brokers: [process.env.SERVER!],
-      ssl: true,
-      sasl: {
-        mechanism: "plain",
-        username: process.env.KAFKA_USERNAME!,
-        password: process.env.KAFKA_PASSWORD!,
-      },
-    });
-
-    const producer = kafka.producer();
-    await producer.connect();
-
+    // if (process.env.DISABLE_KAFKA === "true") {
+    //   return;
+    // }
+    const producer = await Printer.KafkaProducer();
+    console.log("producer", producer);
     return await producer.send({
       topic: "order-print",
       messages: [
