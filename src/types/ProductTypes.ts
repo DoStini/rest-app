@@ -14,6 +14,12 @@ export type ProductType = {
   category: CategoryType;
 };
 
+export type CreateProductType = {
+  name: string;
+  price: number;
+  categoryId: number;
+};
+
 export type ProductOrderType = {
   id: number;
   name: string;

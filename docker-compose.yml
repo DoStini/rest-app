@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   postgres:
     image: postgres:11.13
@@ -15,5 +15,3 @@ services:
       PGADMIN_DEFAULT_PASSWORD: pg!password
     ports:
       - "4321:80"
-    depends_on:
-      - postgres

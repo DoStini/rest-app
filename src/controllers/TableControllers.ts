@@ -18,6 +18,15 @@ export class TableController {
     }
   }
 
+  static getTablesInfo() {
+    return this.prisma.table.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+  }
+
   static async listAllTables() {
     return this.prisma.table.findMany();
   }
@@ -28,7 +37,12 @@ export class TableController {
   ) {
     return await Promise.all(
       amounts.map(async (item) => {
-        await this.prisma.orderProduct.update({
+        return await this.prisma.orderProduct.update({
+          select: {
+            amount: true,
+            productId: true,
+            comment: true,
+          },
           where: {
             productId_orderId: {
               orderId,
@@ -220,13 +234,39 @@ export class TableController {
   static async addOrder(name: string, tableId: number, userId: number) {
     return this.prisma.$transaction(async (tx) => {
       const day = await DayController.currentDay(tx);
+      const table = await tx.table.findUnique({
+        where: { id: tableId },
+      });
+
+      if (!table) throw new Error("Table not found");
+
       if (!day) throw new Error("No day open");
+
       return await tx.order.create({
         data: {
           name,
           tableId,
           userId,
           dayId: day.id,
+        },
+      });
+    });
+  }
+
+  static editOrder(id: number, name: string, tableId: number) {
+    return this.prisma.$transaction(async (tx) => {
+      const order = await this.getOrder(id, tx);
+      if (!order) throw new Error("Order not found");
+      const table = await tx.table.findUnique({
+        where: { id: tableId },
+      });
+      if (!table) throw new Error("Table not found");
+
+      return await tx.order.update({
+        where: { id },
+        data: {
+          name,
+          tableId,
         },
       });
     });
@@ -368,11 +408,7 @@ export class TableController {
       if (!order) throw new Error("Order not found");
       if (!order.closed) throw new Error("Order is not closed");
 
-      const total = order.closedTotal || 0;
-
-      await DayController.decrementCurrentTotal(tx, total);
-
-      await tx.order.update({
+      return await tx.order.update({
         where: { id: orderId },
         data: {
           closed: false,
@@ -400,8 +436,6 @@ export class TableController {
             closedTotal: total,
           },
         });
-
-        await DayController.incrementCurrentTotal(tx, total);
 
         const affectedOrderProducts = await tx.orderProduct.findMany({
           where: { order: { id } },

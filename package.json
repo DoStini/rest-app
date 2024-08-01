@@ -1,33 +1,39 @@
 {
-  "name": "rest-app",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@auth0/nextjs-auth0": "^3.0.1",
-    "@prisma/client": "5.0.0",
-    "@types/node": "20.4.3",
-    "@types/react": "18.2.15",
-    "@types/react-dom": "18.2.7",
-    "autoprefixer": "10.4.14",
-    "eslint": "8.45.0",
-    "eslint-config-next": "13.4.12",
-    "kafkajs": "^2.2.4",
-    "next": "13.4.12",
-    "postcss": "8.4.27",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-icons": "^4.10.1",
-    "swr": "^2.2.0",
-    "tailwindcss": "3.3.3",
-    "typescript": "5.1.6"
-  },
-  "devDependencies": {
-    "prisma": "^5.0.0"
-  }
+    "name": "rest-app",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint"
+    },
+    "prisma": {
+        "seed": "npx tsx prisma/seed.ts"
+    },
+    "dependencies": {
+        "@auth0/nextjs-auth0": "^3.0.1",
+        "@prisma/client": "5.0.0",
+        "@types/node": "20.4.3",
+        "@types/react": "18.2.15",
+        "@types/react-dom": "18.2.7",
+        "autoprefixer": "10.4.14",
+        "eslint": "8.45.0",
+        "eslint-config-next": "^14.0.3",
+        "jsonwebtoken": "^9.0.2",
+        "jwk-to-pem": "^2.0.5",
+        "jwks-rsa": "^3.1.0",
+        "kafkajs": "^2.2.4",
+        "next": "^14.0.3",
+        "postcss": "8.4.27",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-icons": "^4.10.1",
+        "swr": "^2.2.0",
+        "tailwindcss": "3.3.3",
+        "typescript": "5.1.6"
+    },
+    "devDependencies": {
+        "prisma": "^5.0.0"
+    }
 }

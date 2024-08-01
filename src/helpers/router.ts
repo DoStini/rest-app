@@ -1,4 +1,4 @@
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import ROUTES from "./constants/Routes";
 
 export const redirectNotFound = (router: AppRouterInstance) => {

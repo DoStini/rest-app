@@ -9,6 +9,17 @@ consumer = None
 printer = None
 
 
+class PrinterMock:
+    def __init__(self) -> None:
+        pass
+
+    def text(self, text):
+        print(text, end="", flush=True)
+
+    def cut(self):
+        print("------razor------\n")
+
+
 def startup():
     global consumer, printer
     config = {
@@ -27,16 +38,21 @@ def startup():
     )
     consumer.subscribe(["order-print"])
 
-    printer = Usb(
-        int(config["PRINTER_ID_VENDOR"], 16),
-        int(config["PRINTER_ID_PRODUCT"], 16),
-        in_ep=int(config["PRINTER_IN_EP"], 16),
-        out_ep=int(config["PRINTER_OUT_EP"], 16),
-    )
+    try:
+
+        printer = Usb(
+            int(config["PRINTER_ID_VENDOR"], 16),
+            int(config["PRINTER_ID_PRODUCT"], 16),
+            in_ep=int(config["PRINTER_IN_EP"], 16),
+            out_ep=int(config["PRINTER_OUT_EP"], 16),
+        )
+    except Exception as e:
+        printer = PrinterMock()
+
+    print("Printer connected")
 
     printer.text("Connected to cloud\n")
     printer.cut()
-    print("Printer connected")
 
 
 def printer_print_order(order):
@@ -114,10 +130,10 @@ print("Start listening to kafka messages")
 
 try:
     for msg in consumer:
-        print(msg)
+        # print(msg)
         if msg is not None:
             json_data = json.loads(msg.value.decode('utf-8'))
-            print(json_data)
+            # print(json_data)
 
             if json_data["type"] == "order":
                 printer_print_order(json_data)
