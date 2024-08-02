@@ -16,7 +16,7 @@ export class DayController {
   }
 
   static authorizedCloser(user: Claims) {
-    return ["andre.moreira.9"].includes(user.nickname);
+    return ["andre.moreira.9@hotmail.com"].includes(user.email);
   }
 
   static async createDay(name: string) {

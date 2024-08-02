@@ -39,8 +39,18 @@ export default withPageAuthRequired(function TablesList() {
 
   const tables = data?.data;
 
-  const ownOrders = tables.map((table) => ({...table, orders: table.orders.filter((order) => order.creator.username === user?.nickname)}))
-  const otherOrders = tables.map((table) => ({...table, orders: table.orders.filter((order) => order.creator.username !== user?.nickname)}))
+  const ownOrders = tables.map((table) => ({
+    ...table,
+    orders: table.orders.filter(
+      (order) => order.creator.username === user?.nickname
+    ),
+  }));
+  const otherOrders = tables.map((table) => ({
+    ...table,
+    orders: table.orders.filter(
+      (order) => order.creator.username !== user?.nickname
+    ),
+  }));
 
   return (
     <>
@@ -94,22 +104,20 @@ const UserSelection = ({
 }) => {
   return (
     <div className="grid grid-cols-2 gap-5 mt-5">
-      <div className={`text-textSecondary text-xs p-3 max-w-sm text-center cursor-pointer
-      ${
-        personal ? "text-bold bg-primary" : "bg-tertiary"
-      }`}
-      onClick={() => setPersonal(true)}
+      <div
+        className={`text-textSecondary text-xs p-3 max-w-sm text-center cursor-pointer
+      ${personal ? "text-bold bg-primary" : "bg-tertiary"}`}
+        onClick={() => setPersonal(true)}
       >
         Contas próprias
       </div>
 
-      <div className={`text-textSecondary text-xs p-3 max-w-sm text-center cursor-pointer
-        ${
-          !personal ? "text-bold bg-primary" : "bg-tertiary"
-        }`}
+      <div
+        className={`text-textSecondary text-xs p-3 max-w-sm text-center cursor-pointer
+        ${!personal ? "text-bold bg-primary" : "bg-tertiary"}`}
         onClick={() => setPersonal(false)}
-        >
-          Contas gerais
+      >
+        Contas gerais
       </div>
     </div>
   );

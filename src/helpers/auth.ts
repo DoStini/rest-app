@@ -20,6 +20,7 @@ export const withApiAuth =
       return handler(request, ctx, {
         name: data.user.name,
         email: data.user.email,
+        username: data.user.nickname,
       });
     }
 
@@ -48,10 +49,12 @@ export const withApiAuth =
       const data = jwt.verify(token, publicKey) as JwtPayload;
       const nameKey = Object.keys(data).find((key) => key.includes("name"));
       const emailkey = Object.keys(data).find((key) => key.includes("email"));
+      const nickkey = Object.keys(data).find((key) => key.includes("nickname"));
 
       return handler(request, ctx, {
         name: nameKey && data[nameKey],
         email: emailkey && data[emailkey],
+        username: nickkey && data[nickkey],
       });
     } catch (error) {
       return NextResponse.json({}, { status: 401 });
