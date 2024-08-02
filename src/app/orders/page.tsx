@@ -7,9 +7,10 @@ import { fetcher } from "@/helpers/fetcher";
 import { redirectLogin } from "@/helpers/router";
 import { TableSectionType } from "@/types/TableTypes";
 import { FetcherOrdersType, SwrOrdersType } from "@/types/swrTypes";
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
+import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { FiArrowLeft, FiPlusCircle, FiRotateCcw } from "react-icons/fi";
 import useSWR from "swr";
 
@@ -17,6 +18,7 @@ export const revalidate = 0;
 
 export default withPageAuthRequired(function TablesList() {
   const router = useRouter();
+  const { user, isLoading: isLoadingUser } = useUser();
 
   const { data, isLoading, error }: SwrOrdersType = useSWR<FetcherOrdersType>(
     ROUTES.API.ORDERS.ROOT,
@@ -24,23 +26,41 @@ export default withPageAuthRequired(function TablesList() {
     { refreshInterval: REFRESH_INTERVAL }
   );
 
+  const [personal, setPersonal] = useState(true);
+
   if (error?.status === 401) {
     redirectLogin(router);
     return <></>;
   }
 
-  if (isLoading || !data) {
+  if (isLoading || isLoadingUser || !data) {
     return <></>;
   }
 
   const tables = data?.data;
 
+  const ownOrders = tables.map((table) => ({
+    ...table,
+    orders: table.orders.filter(
+      (order) => order.creator.username === user?.nickname
+    ),
+  }));
+  const otherOrders = tables.map((table) => ({
+    ...table,
+    orders: table.orders.filter(
+      (order) => order.creator.username !== user?.nickname
+    ),
+  }));
+
   return (
     <>
       <Header />
+
+      <UserSelection personal={personal} setPersonal={setPersonal} />
+
       <div>
-        {tables
-          .filter((table) => table._count.orders)
+        {(personal ? ownOrders : otherOrders)
+          .filter((table) => table.orders.length > 0)
           .map((table) => (
             <TableSection
               key={table.name}
@@ -72,6 +92,34 @@ const Header = () => {
         </Link>
       </div>
     </CommonHeader>
+  );
+};
+
+const UserSelection = ({
+  personal,
+  setPersonal,
+}: {
+  personal: boolean;
+  setPersonal: (id: boolean) => void;
+}) => {
+  return (
+    <div className="grid grid-cols-2 gap-5 mt-5">
+      <div
+        className={`text-textSecondary text-xs p-3 max-w-sm text-center cursor-pointer
+      ${personal ? "text-bold bg-primary" : "bg-tertiary"}`}
+        onClick={() => setPersonal(true)}
+      >
+        Contas próprias
+      </div>
+
+      <div
+        className={`text-textSecondary text-xs p-3 max-w-sm text-center cursor-pointer
+        ${!personal ? "text-bold bg-primary" : "bg-tertiary"}`}
+        onClick={() => setPersonal(false)}
+      >
+        Contas gerais
+      </div>
+    </div>
   );
 };
 

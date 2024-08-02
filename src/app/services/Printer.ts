@@ -11,7 +11,6 @@ import { Kafka } from "kafkajs";
 export class Printer {
   static async printOrder(order: FinalOrderType) {
     const producer = await Printer.KafkaProducer();
-    console.log("producer", producer);
     return await producer.send({
       topic: "order-print",
       messages: [

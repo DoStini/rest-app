@@ -23,7 +23,7 @@ const POST = withApiAuth(async (request: NextRequest, _ctx, user) => {
   }
 
   const retrievedUser = await UserController.findOrCreateUser(
-    user.email,
+    user.username,
     user.name
   );
 
