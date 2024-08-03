@@ -78,6 +78,9 @@ export class ProductsController {
           where: {
             deleted: false,
           },
+          orderBy: {
+            name: "asc",
+          },
         },
       },
       orderBy: {
