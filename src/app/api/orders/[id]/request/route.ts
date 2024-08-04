@@ -45,10 +45,12 @@ const POST = withApiAuth(async (req, { params }) => {
     return NextResponse.json({}, { status: 404 });
   }
 
-  const amounts = (await req.json()) as {
-    productId: number;
-    amount: number;
-  }[];
+  const amounts = (
+    (await req.json()) as {
+      productId: number;
+      amount: number;
+    }[]
+  ).filter((item) => item.amount > 0);
 
   if (!amounts) {
     return NextResponse.json({}, { status: 404 });

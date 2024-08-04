@@ -37,9 +37,8 @@ export class TableController {
   ) {
     return await Promise.all(
       amounts.map(async (item) => {
-        return await this.prisma.orderProduct.update({
+        const data = await this.prisma.orderProduct.update({
           select: {
-            amount: true,
             productId: true,
             comment: true,
           },
@@ -60,6 +59,10 @@ export class TableController {
             },
           },
         });
+        return {
+          ...data,
+          amount: item.amount,
+        };
       })
     );
   }
