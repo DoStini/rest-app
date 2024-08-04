@@ -48,9 +48,16 @@ export class TableController {
               productId: item.productId,
             },
             product: {
-              category: {
-                printable: true,
-              },
+              OR: [
+                {
+                  category: {
+                    printable: true,
+                  },
+                },
+                {
+                  manual: true,
+                },
+              ],
             },
           },
           data: {
@@ -95,9 +102,16 @@ export class TableController {
             id,
           },
           product: {
-            category: {
-              printable: true,
-            },
+            OR: [
+              {
+                category: {
+                  printable: true,
+                },
+              },
+              {
+                manual: true,
+              },
+            ],
           },
         },
       },

@@ -30,3 +30,8 @@ export type ProductOrderType = {
     comment: string | null;
   }[];
 };
+
+export type ManualProductType = {
+  name: string;
+  price: number;
+};
