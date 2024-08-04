@@ -3,8 +3,6 @@ import { TableController } from "@/controllers/TableControllers";
 import { withApiAuth } from "@/helpers/auth";
 import { NextRequest, NextResponse } from "next/server";
 
-export const maxDuration = 300;
-
 const POST = withApiAuth(async (request: NextRequest, { params }) => {
   const orderIdRaw = params?.id as string;
   const orderId = parseInt(orderIdRaw || "");
