@@ -67,7 +67,7 @@ const POST = withApiAuth(async (req, { params }) => {
   await Printer.printRequest(
     order.creator?.name || "",
     order.createdAt || new Date(),
-    order.Table?.name || "",
+    `${order.Table?.name}, ${order.name}` || "",
     data
   );
 
