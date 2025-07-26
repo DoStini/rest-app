@@ -39,6 +39,7 @@ model Category {
   position  Int       @default(autoincrement())
   products  Product[]
   printable Boolean   @default(true)
+  deleted Boolean @default(false)
 }
 
 model Product {
