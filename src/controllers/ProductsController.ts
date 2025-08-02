@@ -94,6 +94,9 @@ export class ProductsController {
 
   static async listProductByCategoryWithOrder(orderId: number) {
     return this.prisma.category.findMany({
+      where: {
+        deleted: false,
+      },
       include: {
         products: {
           include: {
